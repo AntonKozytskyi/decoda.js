@@ -301,14 +301,18 @@ var Decoda = new Class({
 			close = o + '/' + t + c;
 
 		// Only append a default attribute if the value from a prompt is valid
-		if (tag.hasDefault && tag.prompt) {
-			if (defaultValue) {
+		if (tag.hasDefault) {
+			var field = tag.promptFor || 'default';
+
+			if (tag.prompt && field === 'default') {
+				if (defaultValue) {
+					open += '="' + defaultValue + '"';
+				}
+
+			// Else always show an empty default attribute
+			} else {
 				open += '="' + defaultValue + '"';
 			}
-
-		// Else always show an empty default attribute
-		} else if (tag.hasDefault) {
-			open += '="' + defaultValue + '"';
 		}
 
 		// If a self-closing tag, exit early
