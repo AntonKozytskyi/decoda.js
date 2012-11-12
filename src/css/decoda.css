@@ -10,9 +10,13 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
-	font-size: 12px; }
+	font-size: 12px;
+	margin: 0;
+	padding: 0; }
 
 /* Toolbar */
+
+.decoda-toolbar { display: block; }
 
 .decoda-toolbar ul li {
 	z-index: 0;
@@ -59,7 +63,8 @@
 	padding: 3px 5px;
 	line-height: 150%;
 	min-height: 16px;
-	vertical-align: middle; }
+	vertical-align: middle;
+	text-decoration: none; }
 
 .decoda-toolbar .toolbar-menu a:hover {
 	font-weight: bold;

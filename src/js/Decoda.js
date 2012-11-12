@@ -237,7 +237,9 @@ var Decoda = new Class({
 		}
 
 		// Text is selected
-		var markup = this.formatTag(tag, defaultValue, contentValue);
+		var markup = this.formatTag(tag, defaultValue, contentValue),
+			open = this.formatTag(tag, defaultValue, contentValue, 'open'),
+			close = this.formatTag(tag, defaultValue, contentValue, 'close');
 
 		if (selected = this.textarea.getSelectedText()) {
 			if (tag.selfClose) {
@@ -245,15 +247,20 @@ var Decoda = new Class({
 
 			} else {
 				this.textarea.insertAroundCursor({
-					before: this.formatTag(tag, defaultValue, contentValue, 'open'),
-					after: this.formatTag(tag, defaultValue, contentValue, 'close'),
+					before: open,
+					after: close,
 					defaultMiddle: selected
 				});
 			}
 
 		// Insert at cursor
 		} else {
-			this.textarea.insertAtCursor(markup);
+			this.textarea.insertAtCursor(markup, false);
+
+			// Move the caret in between the tags
+			if (!tag.selfClose) {
+				this.textarea.setCaretPosition(this.textarea.getCaretPosition() - close.length);
+			}
 		}
 
 		this.fireEvent('insert', markup);
@@ -325,7 +332,7 @@ Decoda.filters = {
 		sup: { title: 'Superscript' },
 		abbr: { title: 'Abbreviation', hasDefault: true },
 		br: { title: 'Line Break', selfClose: true },
-		h: { title: 'Horizontal Break', selfClose: true }
+		hr: { title: 'Horizontal Break', selfClose: true }
 	},
 
 	text: {
