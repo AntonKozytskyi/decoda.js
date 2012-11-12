@@ -37,7 +37,6 @@ var Decoda = new Class({
 		open: '[',
 		close: ']',
 		namespace: '',
-		defaults: true,
 		onSubmit: null,
 		onRender: null,
 		onInsert: null
@@ -68,10 +67,6 @@ var Decoda = new Class({
 			this.editor.addClass(this.options.namespace);
 		}
 
-		if (this.options.defaults) {
-			this.defaults();
-		}
-
 		// Add onSubmit event to the parent form
 		if (this.$events.submit) {
 			this.textarea.getParent('form').addEvent('submit', this.$events.submit[0].bind(this));
@@ -82,6 +77,7 @@ var Decoda = new Class({
 	 * Apply all filters and controls to the toolbar.
 	 *
 	 * @param {Array} blacklist
+	 * @return {Decoda}
 	 */
 	defaults: function(blacklist) {
 		Object.each(Decoda.filters, function(filter) {
@@ -91,6 +87,8 @@ var Decoda = new Class({
 		Object.each(Decoda.controls, function(control) {
 			this.addControls(control, blacklist);
 		}.bind(this));
+
+		return this;
 	},
 
 	/**
@@ -98,9 +96,12 @@ var Decoda = new Class({
 	 *
 	 * @param {Array} controls
 	 * @param {Array} blacklist
+	 * @return {Decoda}
 	 */
 	addControls: function(controls, blacklist) {
 		this.buildToolbar(controls, blacklist);
+
+		return this;
 	},
 
 	/**
@@ -108,9 +109,12 @@ var Decoda = new Class({
 	 *
 	 * @param {Array} filters
 	 * @param {Array} blacklist
+	 * @return {Decoda}
 	 */
 	addFilters: function(filters, blacklist) {
 		this.buildToolbar(filters, blacklist);
+
+		return this;
 	},
 
 	/**
@@ -118,6 +122,7 @@ var Decoda = new Class({
 	 *
 	 * @param {Array} commands
 	 * @param {Array} blacklist
+	 * @return {Decoda}
 	 */
 	buildToolbar: function(commands, blacklist) {
 		blacklist = Array.from(blacklist) || [];
@@ -185,6 +190,8 @@ var Decoda = new Class({
 		this.toolbar.grab(ul);
 
 		this.fireEvent('render', ul);
+
+		return this;
 	},
 
 	/**
@@ -213,6 +220,7 @@ var Decoda = new Class({
 	 * Insert a tag into the textarea. If a prompt is defined, grab the value.
 	 *
 	 * @param {Object} tag
+	 * @return {Decoda}
 	 */
 	insertTag: function(tag) {
 		var selected,
@@ -223,6 +231,11 @@ var Decoda = new Class({
 		// Grab a value from the prompt
 		if (tag.prompt) {
 			var answer = prompt(tag.prompt);
+
+			// Exit if prompt is cancelled (null)
+			if (answer === null) {
+				return this;
+			}
 
 			// Trigger callback on the value
 			if (tag.onInsert && typeOf(tag.onInsert) === 'function') {
@@ -264,6 +277,8 @@ var Decoda = new Class({
 		}
 
 		this.fireEvent('insert', markup);
+
+		return this;
 	},
 
 	/**
@@ -475,6 +490,12 @@ Decoda.controls = {
 			title: 'Clean',
 			onClick: function() {
 				this.clean();
+			}
+		},
+		help: {
+			title: 'Help',
+			onClick: function() {
+				alert('Todo');
 			}
 		}
 	},

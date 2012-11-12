@@ -1,0 +1,11 @@
+
+body {
+	padding: 25px;
+	font: normal 12px/125% Verdana, Arial, sans-serif; }
+
+.input { margin-bottom: 25px; }
+
+.input label {
+	font-weight: bold;
+	margin-bottom: 10px;
+	display: block; }

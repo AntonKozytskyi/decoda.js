@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Decoda - Multiple Instances</title>
+	<link type="text/css" rel="stylesheet" href="css/style.css">
+	<link type="text/css" rel="stylesheet" href="../src/css/decoda.css">
+	<script type="text/javascript" src="js/mootools-core-1.4.5.js"></script>
+	<script type="text/javascript" src="js/mootools-more-1.4.0.1.js"></script>
+	<script type="text/javascript" src="../src/js/Decoda.js"></script>
+</head>
+<body>
+	<div class="wrapper">
+		<form action="" method="post">
+			<div class="input">
+				<label for="textarea-1">Default Filters:</label>
+				<textarea id="textarea-1" cols="100" rows="10"></textarea>
+			</div>
+
+			<div class="input">
+				<label for="textarea-2">Block Filters:</label>
+				<textarea id="textarea-2" cols="100" rows="10"></textarea>
+			</div>
+
+			<div class="input">
+				<label for="textarea-3">Text Filters:</label>
+				<textarea id="textarea-3" cols="100" rows="10"></textarea>
+			</div>
+
+			<div class="input">
+				<label for="textarea-4">Email/Image/Url/Video Filters:</label>
+				<textarea id="textarea-4" cols="100" rows="10"></textarea>
+			</div>
+
+			<div class="input">
+				<label for="textarea-5">List/Quote/Code Filters:</label>
+				<textarea id="textarea-5" cols="100" rows="10"></textarea>
+			</div>
+
+			<div class="input">
+				<label for="textarea-6">All Controls:</label>
+				<textarea id="textarea-6" cols="100" rows="10"></textarea>
+			</div>
+		</form>
+	</div>
+
+	<script type="text/javascript">
+		window.addEvent('domready', function() {
+			new Decoda('textarea-1').addFilters(Decoda.filters.default);
+
+			new Decoda('textarea-2').addFilters(Decoda.filters.block);
+
+			new Decoda('textarea-3').addFilters(Decoda.filters.text);
+
+			new Decoda('textarea-4')
+				.addFilters(Decoda.filters.email)
+				.addFilters(Decoda.filters.image)
+				.addFilters(Decoda.filters.url)
+				.addFilters(Decoda.filters.video);
+
+			new Decoda('textarea-5')
+				.addFilters(Decoda.filters.list)
+				.addFilters(Decoda.filters.quote)
+				.addFilters(Decoda.filters.code);
+
+			new Decoda('textarea-6')
+				.addControls(Decoda.controls.editor)
+				.addControls(Decoda.controls.formatting);
+		});
+	</script>
+</body>
+</html>

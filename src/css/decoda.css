@@ -14,9 +14,13 @@
 	margin: 0;
 	padding: 0; }
 
+.decoda-editor textarea { width: 100%; }
+
 /* Toolbar */
 
-.decoda-toolbar { display: block; }
+.decoda-toolbar {
+	display: block;
+	margin-bottom: 5px; }
 
 .decoda-toolbar ul li {
 	z-index: 0;
@@ -129,6 +133,7 @@
 
 .decoda-editor .tag-preview span { background-position: 0 -96px; }
 .decoda-editor .tag-clean span { background-position: -16px -96px; }
+.decoda-editor .tag-help span { background-position: -32px -96px; }
 
 /* Menu Icons */
 
@@ -150,7 +155,9 @@
 	vertical-align: middle;
 	margin-right: 5px;
 	height: 16px;
-	width: 16px; }
+	width: 16px;
+	position: relative;
+	top: -1px; }
 
 .decoda-editor .menu-h1 span { background-image: url("../img/icons-black.png"); }
 .decoda-editor .menu-h1 .heading-h1 span { background-position: -64px -64px; }
