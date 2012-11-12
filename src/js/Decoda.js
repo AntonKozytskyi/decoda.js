@@ -6,12 +6,11 @@
  */
 
 /**
- * Creates a light-weight textarea editor with toolbar functionality for the Decoda markup language.
+ * Creates a lightweight textarea editor with toolbar functionality for the Decoda markup language.
  *
  * @version	1.0.0-beta
  * @uses	MooTools/Core
  * @uses	MooTools/More/Element.Forms
- * @uses	MooTools/More/String.Extras
  */
 var Decoda = new Class({
 	Implements: [Events, Options],
