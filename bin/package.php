@@ -14,22 +14,40 @@ use \mjohnson\packager\minifiers\CssMinifier;
 
 // Fetch variables
 $minify = isset($_GET['minify']) ? (bool) $_GET['minify'] : true;
-$path = dirname(__DIR__);
+$zip = isset($_GET['zip']) ? (bool) $_GET['zip'] : true;
+
+$packager = new Packager(dirname(__DIR__));
 
 if ($minify) {
-	$js = new Packager($path, new JsMinifier());
-	$css = new Packager($path, new CssMinifier());
-
-} else {
-	$js = new Packager($path);
-	$css = new Packager($path);
+	$packager->addMinifier(new JsMinifier());
+	$packager->addMinifier(new CssMinifier());
 }
 
 // Package the contents
-if ($js->package(array('Js'), array('outputFile' => 'bin/{name}-{version}.min.js', 'docBlocks' => false))) {
-	echo 'Javascript packaged.<br>';
+if ($packager->package(array('Js'), array('outputFile' => 'bin/{name}.min.js'))) {
+	echo 'Javascript packaged<br>';
+} else {
+	echo 'Javascript failed to packaged<br>';
 }
 
-if ($css->package(array('Css'), array('outputFile' => 'bin/{name}-{version}.min.css', 'docBlocks' => false))) {
-	echo 'CSS packaged.<br>';
+if ($packager->package(array('Css'), array('outputFile' => 'bin/{name}.min.css'))) {
+	echo 'CSS packaged<br>';
+} else {
+	echo 'CSS failed to packaged<br>';
+}
+
+// Archive the output into a zip file
+if ($zip) {
+	$archive = array(
+		array('path' => 'bin/decoda.min.css', 'folder' => 'css/'),
+		array('path' => 'bin/decoda.min.js', 'folder' => 'js/'),
+		array('path' => 'src/img/icons-black.png', 'folder' => 'img/'),
+		array('path' => 'src/img/icons-white.png', 'folder' => 'img/')
+	);
+
+	if ($packager->archive('bin/{name}-{version}', $archive)) {
+		echo 'Contents archived';
+	} else {
+		echo 'Contents failed to archive';
+	}
 }
