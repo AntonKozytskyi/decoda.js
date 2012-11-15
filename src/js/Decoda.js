@@ -11,6 +11,7 @@
  * @version	1.0.0-beta
  * @uses	MooTools/Core
  * @uses	MooTools/More/Element.Forms
+ * @uses	MooTools/More/Element.Shortcuts
  */
 var Decoda = new Class({
 	Implements: [Events, Options],
@@ -26,9 +27,29 @@ var Decoda = new Class({
 	toolbar: null,
 
 	/**
-	 * Textarea to wrap.
+	 * Textarea input.
 	 */
 	textarea: null,
+
+	/**
+	 * Textarea pane.
+	 */
+	container: null,
+
+	/**
+	 * Preview pane.
+	 */
+	preview: null,
+
+	/**
+	 * Help pane.
+	 */
+	help: null,
+
+	/**
+	 * Array of loaded tags.
+	 */
+	tags: [],
 
 	/**
 	 * Options.
@@ -37,9 +58,12 @@ var Decoda = new Class({
 		open: '[',
 		close: ']',
 		namespace: '',
+		previewUrl: '',
 		onSubmit: null,
-		onRender: null,
-		onInsert: null
+		onInsert: null,
+		onRenderToolbar: null,
+		onRenderPreview: null,
+		onRenderHelp: null
 	},
 
 	/**
@@ -58,9 +82,16 @@ var Decoda = new Class({
 
 		// Build toolbars
 		this.editor = new Element('div.decoda-editor');
-		this.toolbar = new Element('div.decoda-toolbar');
+		this.toolbar = new Element('div.decoda-toolbars');
+		this.container = new Element('div.decoda-textarea');
+		this.preview = new Element('div.decoda-preview').hide();
+		this.help = new Element('div.decoda-help').hide();
 
-		this.editor.grab(this.toolbar).wraps(this.textarea);
+		this.container.wraps(this.textarea);
+		this.editor
+			.grab(this.toolbar)
+			.wraps(this.container)
+			.adopt([this.preview, this.help]);
 
 		// Load defaults
 		if (this.options.namespace) {
@@ -80,13 +111,8 @@ var Decoda = new Class({
 	 * @return {Decoda}
 	 */
 	defaults: function(blacklist) {
-		Object.each(Decoda.filters, function(filter) {
-			this.addFilters(filter, blacklist);
-		}.bind(this));
-
-		Object.each(Decoda.controls, function(control) {
-			this.addControls(control, blacklist);
-		}.bind(this));
+		this.addFilters(null, null, blacklist);
+		this.addControls(null, null, blacklist);
 
 		return this;
 	},
@@ -94,12 +120,20 @@ var Decoda = new Class({
 	/**
 	 * Add controls to the toolbar.
 	 *
-	 * @param {Array} controls
+	 * @param {String} control
+	 * @param {Array} commands
 	 * @param {Array} blacklist
 	 * @return {Decoda}
 	 */
-	addControls: function(controls, blacklist) {
-		this.buildToolbar(controls, blacklist);
+	addControls: function(control, commands, blacklist) {
+		if (!commands) {
+			Object.each(Decoda.controls, function(commands, control) {
+				this.addControls(control, commands, blacklist);
+			}.bind(this));
+
+		} else {
+			this.buildToolbar(control, commands, blacklist);
+		}
 
 		return this;
 	},
@@ -107,12 +141,24 @@ var Decoda = new Class({
 	/**
 	 * Add filters to the toolbar.
 	 *
-	 * @param {Array} filters
+	 * @param {String} filter
+	 * @param {Array} tags
 	 * @param {Array} blacklist
 	 * @return {Decoda}
 	 */
-	addFilters: function(filters, blacklist) {
-		this.buildToolbar(filters, blacklist);
+	addFilters: function(filter, tags, blacklist) {
+		if (!tags) {
+			Object.each(Decoda.filters, function(tags, filter) {
+				this.addFilters(filter, tags, blacklist);
+			}.bind(this));
+
+		} else {
+			this.buildToolbar(filter, tags, blacklist);
+
+			tags.each(function(tag) {
+				this.tags.push(tag);
+			}.bind(this));
+		}
 
 		return this;
 	},
@@ -120,33 +166,33 @@ var Decoda = new Class({
 	/**
 	 * Add commands to the toolbar.
 	 *
+	 * @param {String} id
 	 * @param {Array} commands
 	 * @param {Array} blacklist
 	 * @return {Decoda}
 	 */
-	buildToolbar: function(commands, blacklist) {
+	buildToolbar: function(id, commands, blacklist) {
 		blacklist = Array.from(blacklist) || [];
 
-		var self = this,
-			ul = new Element('ul');
+		var ul = new Element('ul.decoda-toolbar').addClass('toolbar-' + id),
+			li, button, menu, anchor;
 
 		// Create menu using the commands
-		Object.each(commands, function(command, key) {
-			command.tag = key;
-
+		commands.each(function(command) {
 			if (blacklist.indexOf(command.tag) >= 0) {
 				return;
 			}
 
-			var li = new Element('li'),
-				button = new Element('button.tag-' + command.tag, {
-					html: '<span></span>',
-					title: command.title,
-					type: 'button',
-					events: {
-						click: (command.onClick ? command.onClick : self.insertTag).bind(self, command)
-					}
-				});
+			li = new Element('li');
+
+			// Create the button
+			button = new Element('button.tag-' + command.tag, {
+				html: '<span></span>',
+				title: command.title,
+				type: 'button'
+			});
+
+			button.addEvent('click', (command.onClick || this.insertTag).bind(this, command, button));
 
 			if (command.className) {
 				button.addClass(command.className);
@@ -156,7 +202,7 @@ var Decoda = new Class({
 
 			// Create sub-menu using options
 			if (command.options) {
-				var sub = new Element('ul.toolbar-menu').addClass('menu-' + command.tag);
+				menu = new Element('ul.decoda-menu').addClass('menu-' + command.tag);
 
 				command.options.each(function(option) {
 					option = Object.merge({}, command, option);
@@ -165,31 +211,60 @@ var Decoda = new Class({
 						return;
 					}
 
-					var anchor = new Element('a', {
+					anchor = new Element('a', {
 						href: 'javascript:;',
 						html: '<span></span>' + option.title,
-						title: option.title,
-						events: {
-							click: (option.onClick ? option.onClick : self.insertTag).bind(self, option)
-						}
+						title: option.title
 					});
+
+					anchor.addEvent('click', (option.onClick || this.insertTag).bind(this, option, anchor));
 
 					if (option.className) {
 						anchor.addClass(option.className);
 					}
 
-					sub.grab(new Element('li').grab(anchor));
-				});
+					menu.grab(new Element('li').grab(anchor));
+				}.bind(this));
 
-				li.grab(sub);
+				li.grab(menu);
 			}
 
 			ul.grab(li);
+		}.bind(this));
+
+		if (ul.hasChildNodes()) {
+			this.toolbar.grab(ul);
+
+			this.fireEvent('renderToolbar', ul);
+		}
+
+		return this;
+	},
+
+	/**
+	 * Disable all the buttons and menus in the toolbar.
+	 *
+	 * @return {Decoda}
+	 */
+	disableToolbar: function() {
+		this.toolbar.getElements('button').each(function(node) {
+			node.set('disabled', true);
+			node.getParent('li').addClass('disabled');
 		});
 
-		this.toolbar.grab(ul);
+		return this;
+	},
 
-		this.fireEvent('render', ul);
+	/**
+	 * Enable all the buttons and menus in the toolbar.
+	 *
+	 * @return {Decoda}
+	 */
+	enableToolbar: function() {
+		this.toolbar.getElements('button').each(function(node) {
+			node.set('disabled', false);
+			node.getParent('li').removeClass('disabled');
+		});
 
 		return this;
 	},
@@ -197,7 +272,7 @@ var Decoda = new Class({
 	/**
 	 * Clean the textarea input.
 	 *
-	 * @return {String}
+	 * @return {boolean}
 	 */
 	clean: function() {
 		var value = String.from(this.textarea.get('value'));
@@ -213,7 +288,7 @@ var Decoda = new Class({
 
 		this.textarea.set('value', value);
 
-		return value;
+		return true;
 	},
 
 	/**
@@ -238,7 +313,7 @@ var Decoda = new Class({
 			}
 
 			// Trigger callback on the value
-			if (tag.onInsert && typeOf(tag.onInsert) === 'function') {
+			if (typeOf(tag.onInsert) === 'function') {
 	            answer = tag.onInsert(answer, field);
 			}
 
@@ -331,227 +406,354 @@ var Decoda = new Class({
 		}
 
 		return open + contentValue + close;
+	},
+
+	/**
+	 * Render a help / how-to table using the loaded tags.
+	 */
+	renderHelp: function() {
+		var table = new Element('table'),
+			thead = new Element('thead'),
+			tbody = new Element('tbody'),
+			tr,
+			examples,
+			attributes;
+
+		// Create headers
+		tr = new Element('tr');
+		tr.grab(new Element('th', { text: 'Tag' }));
+		tr.grab(new Element('th', { text: 'Attributes' }));
+		tr.grab(new Element('th', { text: 'Examples' }));
+		thead.grab(tr);
+
+		// Create rows
+		this.tags.each(function(tag) {
+			attributes = (tag.attributes || []).join(', ');
+			examples = (tag.examples || [ this.formatTag(tag) ]).join('<br>');
+
+			tr = new Element('tr');
+			tr.grab(new Element('td', { html: tag.title }).addClass('tag-title'));
+			tr.grab(new Element('td', { html: attributes }).addClass('tag-attributes'));
+			tr.grab(new Element('td', { html: examples }).addClass('tag-examples'));
+			tbody.grab(tr);
+		}.bind(this));
+
+		table.adopt([thead, tbody]);
+		this.help.grab(table);
+
+		this.fireEvent('renderHelp', table);
+	},
+
+	/**
+	 * Post an AJAX call to a URL that returns the parsed Decoda markup.
+	 */
+	renderPreview: function() {
+		this.preview.addClass('loading');
+
+		new Request({
+			url: this.options.previewUrl,
+			data: {
+				input: this.textarea.get('value')
+			},
+			onSuccess: function(response) {
+				this.preview.removeClass('loading').set('html', response);
+			}.bind(this),
+			onFailure: function() {
+				this.container.show();
+				this.enableToolbar();
+
+				alert('An error has occurred while rendering the preview.');
+			}.bind(this)
+		}).post();
+
+		this.fireEvent('renderPreview');
 	}
 
 });
 
 /**
- * Collection of tags indexed by filter.
- *
- * @type {Object}
+ * Collection of filters and controls.
  */
-Decoda.filters = {
-
-	default: {
-		b: { title: 'Bold', key: 'b' },
-		i: { title: 'Italics', key: 'i' },
-		u: { title: 'Underline', key: 'u' },
-		s: { title: 'Strike-Through', key: 's' },
-		sub: { title: 'Subscript' },
-		sup: { title: 'Superscript' },
-		abbr: { title: 'Abbreviation', hasDefault: true },
-		br: { title: 'Line Break', selfClose: true },
-		hr: { title: 'Horizontal Break', selfClose: true }
-	},
-
-	text: {
-		font: {
-			title: 'Font Family',
-			prompt: 'Font:',
-			hasDefault: true,
-			options: [
-				{ title: 'Arial', defaultValue: 'Arial', className: 'font-arial', prompt: false },
-				{ title: 'Tahoma', defaultValue: 'Tahoma', className: 'font-tahoma', prompt: false },
-				{ title: 'Verdana', defaultValue: 'Verdana', className: 'font-verdana', prompt: false },
-				{ title: 'Courier', defaultValue: 'Courier', className: 'font-courier', prompt: false },
-				{ title: 'Times', defaultValue: 'Times', className: 'font-times', prompt: false },
-				{ title: 'Helvetica', defaultValue: 'Helvetica', className: 'font-helvetica', prompt: false }
-			]
-		},
-		size: {
-			title: 'Text Size',
-			prompt: 'Size:',
-			hasDefault: true,
-			options: [
-				{ title: 'Small', defaultValue: '10', className: 'size-small', prompt: false },
-				{ title: 'Normal', defaultValue: '12', className: 'size-normal', prompt: false },
-				{ title: 'Medium', defaultValue: '18', className: 'size-medium', prompt: false },
-				{ title: 'Large', defaultValue: '24', className: 'size-large', prompt: false }
-			],
-			onInsert: function(value, field) {
-				if (field === 'default') {
-					return Number.from(value).limit(10, 29);
-				}
-
-				return value;
-			}
-		},
-		color: {
-			title: 'Text Color',
-			prompt: 'Hex Code:',
-			hasDefault: true,
-			options: [
-				{ title: 'Yellow', defaultValue: 'yellow', className: 'color-yellow', prompt: false },
-				{ title: 'Orange', defaultValue: 'orange', className: 'color-orange', prompt: false },
-				{ title: 'Red', defaultValue: 'red', className: 'color-red', prompt: false },
-				{ title: 'Blue', defaultValue: 'blue', className: 'color-blue', prompt: false },
-				{ title: 'Purple', defaultValue: 'purple', className: 'color-purple', prompt: false },
-				{ title: 'Green', defaultValue: 'green', className: 'color-green', prompt: false },
-				{ title: 'White', defaultValue: 'white', className: 'color-white', prompt: false },
-				{ title: 'Gray', defaultValue: 'gray', className: 'color-gray', prompt: false },
-				{ title: 'Black', defaultValue: 'black', className: 'color-black', prompt: false }
-			],
-			onInsert: function(value, field) {
-				if (field === 'default') {
-					return /(?:#[0-9a-f]{3,6}|[a-z]+)/i.exec(value) ? value : null;
-				}
-
-				return value;
-			}
-		},
-		h1: {
-			title: 'Heading',
-			options: [
-				{ tag: 'h1', title: '1st', className: 'heading-h1' },
-				{ tag: 'h2', title: '2nd', className: 'heading-h2' },
-				{ tag: 'h3', title: '3rd', className: 'heading-h3' },
-				{ tag: 'h4', title: '4th', className: 'heading-h4' },
-				{ tag: 'h5', title: '5th', className: 'heading-h5' },
-				{ tag: 'h6', title: '6th', className: 'heading-h6' }
-			]
-		}
-	},
-
-	block: {
-		left: { title: 'Left Align' },
-		center: { title: 'Center Align' },
-		right: { title: 'Right Align' },
-		justify: { title: 'Justify Align' },
-		hide: { title: 'Hide' },
-		spoiler: { title: 'Spoiler' }
-	},
-
-	list: {
-		list: { title: 'Unordered List' },
-		olist: { title: 'Ordered List' },
-		li: { title: 'List Item' }
-	},
-
-	quote: {
-		quote: { title: 'Quote Block', key: 'q', prompt: 'Author:', hasDefault: true }
-	},
-
-	code: {
-		code: { title: 'Code Block' },
-		var: { title: 'Variable' }
-	},
-
-	email: {
-		email: { title: 'Email', key: 'e', prompt: 'Email Address:', hasDefault: true }
-	},
-
-	url: {
-		url: { title: 'URL', key: 'l', prompt: 'Web Address:', hasDefault: true }
-	},
-
-	image: {
-		img: { title: 'Image', key: 'i', prompt: 'Image URL:' }
-	},
-
-	video: {
-		video: {
-			title: 'Video',
-			key: 'v',
-			prompt: 'Video Code:',
-			promptFor: 'content',
-			hasDefault: true,
-			options: [
-				{ title: 'YouTube', defaultValue: 'youtube', className: 'video-youtube' },
-				{ title: 'Vimeo', defaultValue: 'vimeo', className: 'video-vimeo' },
-				{ title: 'Veoh', defaultValue: 'veoh', className: 'video-veoh' },
-				{ title: 'LiveLeak', defaultValue: 'liveleak', className: 'video-liveleak' }
-			]
-		}
-	}
-
-};
+Decoda.filters = {};
+Decoda.controls = {};
 
 /**
- * Collection of commands indexed by control group.
- *
- * @type {Object}
+ * Default standard tags.
  */
-Decoda.controls = {
+Decoda.filters.default =  [
+	{ tag: 'b', title: 'Bold', key: 'b' },
+	{ tag: 'i', title: 'Italics', key: 'i' },
+	{ tag: 'u', title: 'Underline', key: 'u' },
+	{ tag: 's', title: 'Strike-Through', key: 's' },
+	{ tag: 'sub', title: 'Subscript' },
+	{ tag: 'sup', title: 'Superscript' },
+	{ tag: 'abbr', title: 'Abbreviation', hasDefault: true, attributes: ['default'] },
+	{ tag: 'br', title: 'Line Break', selfClose: true },
+	{ tag: 'hr', title: 'Horizontal Break', selfClose: true }
+];
 
-	editor: {
-		preview: {
-			title: 'Preview',
-			onClick: function() {
-				alert('Preview functionality has not been defined.');
+/**
+ * Text and font related tags.
+ */
+Decoda.filters.text = [
+	{
+		tag: 'font',
+		title: 'Font Family',
+		prompt: 'Font:',
+		hasDefault: true,
+		attributes: ['default'],
+		examples: ['[font="Arial"][/font]'],
+		options: [
+			{ title: 'Arial', defaultValue: 'Arial', className: 'font-arial', prompt: false },
+			{ title: 'Tahoma', defaultValue: 'Tahoma', className: 'font-tahoma', prompt: false },
+			{ title: 'Verdana', defaultValue: 'Verdana', className: 'font-verdana', prompt: false },
+			{ title: 'Courier', defaultValue: 'Courier', className: 'font-courier', prompt: false },
+			{ title: 'Times', defaultValue: 'Times', className: 'font-times', prompt: false },
+			{ title: 'Helvetica', defaultValue: 'Helvetica', className: 'font-helvetica', prompt: false }
+		]
+	}, {
+		tag: 'size',
+		title: 'Text Size',
+		prompt: 'Size:',
+		hasDefault: true,
+		attributes: ['default'],
+		examples: ['[size="12"][/size]'],
+		options: [
+			{ title: 'Small', defaultValue: '10', className: 'size-small', prompt: false },
+			{ title: 'Normal', defaultValue: '12', className: 'size-normal', prompt: false },
+			{ title: 'Medium', defaultValue: '18', className: 'size-medium', prompt: false },
+			{ title: 'Large', defaultValue: '24', className: 'size-large', prompt: false }
+		],
+		onInsert: function(value, field) {
+			if (field === 'default') {
+				return Number.from(value).limit(10, 29);
 			}
-		},
-		clean: {
-			title: 'Clean',
-			onClick: function() {
-				this.clean();
+
+			return value;
+		}
+	}, {
+		tag: 'color',
+		title: 'Text Color',
+		prompt: 'Hex Code:',
+		hasDefault: true,
+		attributes: ['default'],
+		examples: ['[color="red"][/color]'],
+		options: [
+			{ title: 'Yellow', defaultValue: 'yellow', className: 'color-yellow', prompt: false },
+			{ title: 'Orange', defaultValue: 'orange', className: 'color-orange', prompt: false },
+			{ title: 'Red', defaultValue: 'red', className: 'color-red', prompt: false },
+			{ title: 'Blue', defaultValue: 'blue', className: 'color-blue', prompt: false },
+			{ title: 'Purple', defaultValue: 'purple', className: 'color-purple', prompt: false },
+			{ title: 'Green', defaultValue: 'green', className: 'color-green', prompt: false },
+			{ title: 'White', defaultValue: 'white', className: 'color-white', prompt: false },
+			{ title: 'Gray', defaultValue: 'gray', className: 'color-gray', prompt: false },
+			{ title: 'Black', defaultValue: 'black', className: 'color-black', prompt: false }
+		],
+		onInsert: function(value, field) {
+			if (field === 'default') {
+				return /(?:#[0-9a-f]{3,6}|[a-z]+)/i.exec(value) ? value : null;
 			}
-		},
-		help: {
-			title: 'Help',
-			onClick: function() {
-				alert('Todo');
+
+			return value;
+		}
+	}, {
+		tag: 'h1',
+		title: 'Heading',
+		examples: ['[h1][/h1], [h2][/h2], [h3][/h3], [h4][/h4], [h5][/h5], [h6][/h6]'],
+		options: [
+			{ tag: 'h1', title: '1st', className: 'heading-h1' },
+			{ tag: 'h2', title: '2nd', className: 'heading-h2' },
+			{ tag: 'h3', title: '3rd', className: 'heading-h3' },
+			{ tag: 'h4', title: '4th', className: 'heading-h4' },
+			{ tag: 'h5', title: '5th', className: 'heading-h5' },
+			{ tag: 'h6', title: '6th', className: 'heading-h6' }
+		]
+	}
+];
+
+/**
+ * Block and positioning related tags.
+ */
+Decoda.filters.block = [
+	{ tag: 'left', title: 'Left Align' },
+	{ tag: 'center', title: 'Center Align' },
+	{ tag: 'right', title: 'Right Align' },
+	{ tag: 'justify', title: 'Justify Align' },
+	{ tag: 'hide', title: 'Hide' },
+	{ tag: 'spoiler', title: 'Spoiler' }
+];
+
+/**
+ * List item related tags.
+ */
+Decoda.filters.list = [
+	{ tag: 'list', title: 'Unordered List' },
+	{ tag: 'olist', title: 'Ordered List' },
+	{ tag: 'li', title: 'List Item' }
+];
+
+/**
+ * Quote related tags.
+ */
+Decoda.filters.quote = [
+	{
+		tag: 'quote',
+		key: 'q',
+		title: 'Quote Block',
+		prompt: 'Author:',
+		hasDefault: true,
+		examples: ['[quote][/quote]', '[quote="Author"][/quote]', '[quote date="12/12/2012"][/quote]'],
+		attributes: ['default <span>(optional)</span>', 'date <span>(optional)</span>']
+	}
+];
+
+/**
+ * Code and variable related tags.
+ */
+Decoda.filters.code = [
+	{
+		tag: 'code',
+		title: 'Code Block',
+		examples: ['[code][/code]', '[code="html"][/code]', '[code hl="1,5,10"][/code]'],
+		attributes: ['default <span>(optional)</span>', 'hl <span>(optional)</span>']
+	}, {
+		tag: 'var',
+		title: 'Variable'
+	}
+];
+
+/**
+ * Email related tags.
+ */
+Decoda.filters.email = [
+	{
+		tag: 'email',
+		key: 'e',
+		title: 'Email',
+		prompt: 'Email Address:',
+		hasDefault: true,
+		examples: ['[email]email@domain.com[/email]', '[email="email@domain.com"][/email]'],
+		attributes: ['default <span>(optional)</span>']
+	}
+];
+
+/**
+ * URL related tags.
+ */
+Decoda.filters.url = [
+	{
+		tag: 'url',
+		key: 'l',
+		title: 'URL',
+		prompt: 'Web Address:',
+		hasDefault: true,
+		examples: ['[url]http://domain.com[/url]', '[url="http://domain.com"][/url]'],
+		attributes: ['default <span>(optional)</span>']
+	}
+];
+
+/**
+ * Image related tags.
+ */
+Decoda.filters.image = [
+	{
+		tag: 'img',
+		key: 'i',
+		title: 'Image',
+		prompt: 'Image URL:',
+		examples: ['[img][/img]', '[img width="250" height="15%"][/img]'],
+		attributes: ['width <span>(optional)</span>', 'height <span>(optional)</span>']
+	}
+];
+
+/**
+ * Video related tags.
+ */
+Decoda.filters.video = [
+	{
+		tag: 'video',
+		key: 'v',
+		title: 'Video',
+		prompt: 'Video Code:',
+		promptFor: 'content',
+		hasDefault: true,
+		examples: ['[video="youtube"]videoCode[/video]'],
+		attributes: ['default'],
+		options: [
+			{ title: 'YouTube', defaultValue: 'youtube', className: 'video-youtube' },
+			{ title: 'Vimeo', defaultValue: 'vimeo', className: 'video-vimeo' },
+			{ title: 'Veoh', defaultValue: 'veoh', className: 'video-veoh' },
+			{ title: 'LiveLeak', defaultValue: 'liveleak', className: 'video-liveleak' }
+		]
+	}
+];
+
+/**
+ * Editor processing commands.
+ */
+Decoda.controls.editor = [
+	{
+		tag: 'preview',
+		key: 'p',
+		title: 'Preview',
+		onClick: function(command, button) {
+			if (!this.options.previewUrl) {
+				alert('Preview functionality has not been enabled.');
+				return;
+			}
+
+			this.container.hide();
+			this.help.hide();
+
+			if (this.preview.isVisible()) {
+				this.preview.hide().empty();
+				this.container.show();
+				this.enableToolbar();
+
+			} else {
+				this.preview.show();
+				this.disableToolbar();
+				this.renderPreview();
+			}
+
+			button.set('disabled', false);
+		}
+	}, {
+		tag: 'clean',
+		key: 'c',
+		title: 'Clean',
+		onClick: function() {
+			this.disableToolbar();
+
+			if (this.clean()) {
+				window.setTimeout(function() {
+					this.enableToolbar();
+				}.bind(this), 500);
 			}
 		}
-	},
+	}, {
+		tag: 'help',
+		key: 'h',
+		title: 'Help',
+		onClick: function(command, button) {
+			this.container.hide();
+			this.preview.hide();
 
-	formatting: {
-		capitalize: {
-			title: 'Capitalize',
-			onClick: function() {
-				var selected = this.textarea.getSelectedText();
-
-				if (selected) {
-					this.textarea.insertAtCursor(selected.capitalize());
-				}
+			if (!this.help.hasChildNodes()) {
+				this.renderHelp();
 			}
-		},
-		lowercase: {
-			title: 'Lowercase',
-			onClick: function() {
-				var selected = this.textarea.getSelectedText();
 
-				if (selected) {
-					this.textarea.insertAtCursor(selected.toLowerCase());
-				}
+			if (this.help.isVisible()) {
+				this.help.hide();
+				this.container.show();
+				this.enableToolbar();
+
+			} else {
+				this.help.show();
+				this.disableToolbar();
 			}
-		},
-		uppercase: {
-			title: 'Uppercase',
-			onClick: function() {
-				var selected = this.textarea.getSelectedText();
 
-				if (selected) {
-					this.textarea.insertAtCursor(selected.toUpperCase());
-				}
-			}
-		},
-		replace: {
-			title: 'Replace',
-			prompt: 'Replace With:',
-			onClick: function(control) {
-				var selected = this.textarea.getSelectedText();
-
-				if (selected) {
-					var replaceWith = prompt(control.prompt);
-
-					if (!replaceWith) {
-						return;
-					}
-
-					this.textarea.insertAtCursor(replaceWith);
-				}
-			}
+			button.set('disabled', false);
 		}
 	}
-
-};
+];
