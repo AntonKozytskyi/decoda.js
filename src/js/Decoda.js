@@ -15,6 +15,7 @@
  * @uses	MooTools/Core
  * @uses	MooTools/More/Element.Forms
  * @uses	MooTools/More/Element.Shortcuts
+ * @uses	MooTools/More/Element.Event.Pseudo.Keys
  */
 window.Decoda = new Class({
 	Implements: [Events, Options],
@@ -200,6 +201,15 @@ window.Decoda = new Class({
 
 			button.addEvent('click', (command.onClick || this.insertTag).bind(this, command, button));
 
+			if (command.key) {
+				button.set('title', button.get('title') + ' (Shift + ' + command.key.toUpperCase() + ')');
+
+				this.textarea.addEvent('keydown:keys(shift+' + command.key + ')', function(e) {
+					e.stop();
+					this.fireEvent('click');
+				}.bind(button));
+			}
+
 			if (command.className) {
 				button.addClass(command.className);
 			}
@@ -305,9 +315,10 @@ window.Decoda = new Class({
 	 * Insert a tag into the textarea. If a prompt is defined, grab the value.
 	 *
 	 * @param {Object} tag
+	 * @param {Element} button
 	 * @return {Decoda}
 	 */
-	insertTag: function(tag) {
+	insertTag: function(tag, button) {
 		var defaultValue,
 			contentValue,
 			field = tag.promptFor || 'default',
@@ -670,7 +681,7 @@ Decoda.filters.url = [
 Decoda.filters.image = [
 	{
 		tag: 'img',
-		key: 'i',
+		key: 'm',
 		title: 'Image',
 		prompt: 'Image URL:',
 		examples: ['[img][/img]', '[img width="250" height="15%"][/img]'],

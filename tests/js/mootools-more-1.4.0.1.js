@@ -1,6 +1,6 @@
 // MooTools: the javascript framework.
-// Load this file's selection again by visiting: http://mootools.net/more/7c0c7033e1f4ad518e4afb3183380615
-// Or build this file again with packager using: packager build More/Element.Forms More/Element.Shortcuts
+// Load this file's selection again by visiting: http://mootools.net/more/43b1e5dcaa73aeabbc7922d5d403d5e4
+// Or build this file again with packager using: packager build More/Element.Forms More/Element.Event.Pseudos.Keys More/Element.Shortcuts
 /*
 ---
 copyrights:
@@ -30,9 +30,25 @@ this.set("value",c.substring(0,d.start)+b+c.substring(d.end,c.length));if(a!==fa
 }return this;},insertAroundCursor:function(b,a){b=Object.append({before:"",defaultMiddle:"",after:""},b);var c=this.getSelectedText()||b.defaultMiddle;
 var g=this.getSelectedRange();var f=this.get("value");if(g.start==g.end){this.set("value",f.substring(0,g.start)+b.before+c+b.after+f.substring(g.end,f.length));
 this.selectRange(g.start+b.before.length,g.end+b.before.length+c.length);}else{var d=f.substring(g.start,g.end);this.set("value",f.substring(0,g.start)+b.before+d+b.after+f.substring(g.end,f.length));
-var e=g.start+b.before.length;if(a!==false){this.selectRange(e,e+d.length);}else{this.setCaretPosition(e+f.length);}}return this;}});Element.implement({isDisplayed:function(){return this.getStyle("display")!="none";
-},isVisible:function(){var a=this.offsetWidth,b=this.offsetHeight;return(a==0&&b==0)?false:(a>0&&b>0)?true:this.style.display!="none";},toggle:function(){return this[this.isDisplayed()?"hide":"show"]();
-},hide:function(){var b;try{b=this.getStyle("display");}catch(a){}if(b=="none"){return this;}return this.store("element:_originalDisplay",b||"").setStyle("display","none");
-},show:function(a){if(!a&&this.isDisplayed()){return this;}a=a||this.retrieve("element:_originalDisplay")||"block";return this.setStyle("display",(a=="none")?"block":a);
-},swapClass:function(a,b){return this.removeClass(a).addClass(b);}});Document.implement({clearSelection:function(){if(window.getSelection){var a=window.getSelection();
-if(a&&a.removeAllRanges){a.removeAllRanges();}}else{if(document.selection&&document.selection.empty){try{document.selection.empty();}catch(b){}}}}});
+var e=g.start+b.before.length;if(a!==false){this.selectRange(e,e+d.length);}else{this.setCaretPosition(e+f.length);}}return this;}});(function(){Events.Pseudos=function(h,e,f){var d="_monitorEvents:";
+var c=function(i){return{store:i.store?function(j,k){i.store(d+j,k);}:function(j,k){(i._monitorEvents||(i._monitorEvents={}))[j]=k;},retrieve:i.retrieve?function(j,k){return i.retrieve(d+j,k);
+}:function(j,k){if(!i._monitorEvents){return k;}return i._monitorEvents[j]||k;}};};var g=function(k){if(k.indexOf(":")==-1||!h){return null;}var j=Slick.parse(k).expressions[0][0],p=j.pseudos,i=p.length,o=[];
+while(i--){var n=p[i].key,m=h[n];if(m!=null){o.push({event:j.tag,value:p[i].value,pseudo:n,original:k,listener:m});}}return o.length?o:null;};return{addEvent:function(m,p,j){var n=g(m);
+if(!n){return e.call(this,m,p,j);}var k=c(this),r=k.retrieve(m,[]),i=n[0].event,l=Array.slice(arguments,2),o=p,q=this;n.each(function(s){var t=s.listener,u=o;
+if(t==false){i+=":"+s.pseudo+"("+s.value+")";}else{o=function(){t.call(q,s,u,arguments,o);};}});r.include({type:i,event:p,monitor:o});k.store(m,r);if(m!=i){e.apply(this,[m,p].concat(l));
+}return e.apply(this,[i,o].concat(l));},removeEvent:function(m,l){var k=g(m);if(!k){return f.call(this,m,l);}var n=c(this),j=n.retrieve(m);if(!j){return this;
+}var i=Array.slice(arguments,2);f.apply(this,[m,l].concat(i));j.each(function(o,p){if(!l||o.event==l){f.apply(this,[o.type,o.monitor].concat(i));}delete j[p];
+},this);n.store(m,j);return this;}};};var b={once:function(e,f,d,c){f.apply(this,d);this.removeEvent(e.event,c).removeEvent(e.original,f);},throttle:function(d,e,c){if(!e._throttled){e.apply(this,c);
+e._throttled=setTimeout(function(){e._throttled=false;},d.value||250);}},pause:function(d,e,c){clearTimeout(e._pause);e._pause=e.delay(d.value||250,this,c);
+}};Events.definePseudo=function(c,d){b[c]=d;return this;};Events.lookupPseudo=function(c){return b[c];};var a=Events.prototype;Events.implement(Events.Pseudos(b,a.addEvent,a.removeEvent));
+["Request","Fx"].each(function(c){if(this[c]){this[c].implement(Events.prototype);}});})();(function(){var d={relay:false},c=["once","throttle","pause"],b=c.length;
+while(b--){d[c[b]]=Events.lookupPseudo(c[b]);}DOMEvent.definePseudo=function(e,f){d[e]=f;return this;};var a=Element.prototype;[Element,Window,Document].invoke("implement",Events.Pseudos(d,a.addEvent,a.removeEvent));
+})();(function(){var a="$moo:keys-pressed",b="$moo:keys-keyup";DOMEvent.definePseudo("keys",function(d,e,c){var g=c[0],f=[],h=this.retrieve(a,[]);f.append(d.value.replace("++",function(){f.push("+");
+return"";}).split("+"));h.include(g.key);if(f.every(function(j){return h.contains(j);})){e.apply(this,c);}this.store(a,h);if(!this.retrieve(b)){var i=function(j){(function(){h=this.retrieve(a,[]).erase(j.key);
+this.store(a,h);}).delay(0,this);};this.store(b,i).addEvent("keyup",i);}});DOMEvent.defineKeys({"16":"shift","17":"control","18":"alt","20":"capslock","33":"pageup","34":"pagedown","35":"end","36":"home","144":"numlock","145":"scrolllock","186":";","187":"=","188":",","190":".","191":"/","192":"`","219":"[","220":"\\","221":"]","222":"'","107":"+"}).defineKey(Browser.firefox?109:189,"-");
+})();Element.implement({isDisplayed:function(){return this.getStyle("display")!="none";},isVisible:function(){var a=this.offsetWidth,b=this.offsetHeight;
+return(a==0&&b==0)?false:(a>0&&b>0)?true:this.style.display!="none";},toggle:function(){return this[this.isDisplayed()?"hide":"show"]();},hide:function(){var b;
+try{b=this.getStyle("display");}catch(a){}if(b=="none"){return this;}return this.store("element:_originalDisplay",b||"").setStyle("display","none");},show:function(a){if(!a&&this.isDisplayed()){return this;
+}a=a||this.retrieve("element:_originalDisplay")||"block";return this.setStyle("display",(a=="none")?"block":a);},swapClass:function(a,b){return this.removeClass(a).addClass(b);
+}});Document.implement({clearSelection:function(){if(window.getSelection){var a=window.getSelection();if(a&&a.removeAllRanges){a.removeAllRanges();}}else{if(document.selection&&document.selection.empty){try{document.selection.empty();
+}catch(b){}}}}});
