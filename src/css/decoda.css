@@ -195,11 +195,11 @@
 
 .decoda-help table td,
 .decoda-help table th {
-	border: 1px solid rgba(255, 255, 255, .05);
+	border: 1px solid rgba(0, 0, 0, .05);
 	padding: 5px; }
 
 .decoda-help table th {
 	font-weight: bold;
-	background: rgba(255, 255, 255, .05); }
+	background: rgba(0, 0, 0, .05); }
 
 .decoda-help table .tag-title { font-weight: bold; }

@@ -50,7 +50,9 @@
 
 	<script type="text/javascript">
 		window.addEvent('domready', function() {
-			new Decoda('textarea-1').addFilters('default', Decoda.filters.default);
+			new Decoda('textarea-1')
+				.addFilters('default', Decoda.filters.default)
+				.addControls('editor', Decoda.controls.editor);
 
 			new Decoda('textarea-2').addFilters('block', Decoda.filters.block);
 

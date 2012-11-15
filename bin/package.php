@@ -24,20 +24,20 @@ if ($minify) {
 }
 
 // Package the contents
-if ($packager->package(array('Js'), array('outputFile' => 'bin/{name}.min.js'))) {
+if ($packager->package(array('Js'), array('outputFile' => 'bin/{name}-{version}.min.js'))) {
 	echo 'Javascript packaged<br>';
 } else {
 	echo 'Javascript failed to packaged<br>';
 }
 
-if ($packager->package(array('Css'), array('outputFile' => 'bin/{name}.min.css'))) {
+if ($packager->package(array('Css'), array('outputFile' => 'bin/{name}-{version}.min.css'))) {
 	echo 'CSS packaged<br>';
 } else {
 	echo 'CSS failed to packaged<br>';
 }
 
 // Archive the output into a zip file
-if ($zip) {
+/*if ($zip) {
 	$archive = array(
 		array('path' => 'bin/decoda.min.css', 'folder' => 'css/'),
 		array('path' => 'bin/decoda.min.js', 'folder' => 'js/'),
@@ -50,4 +50,4 @@ if ($zip) {
 	} else {
 		echo 'Contents failed to archive';
 	}
-}
+}*/
