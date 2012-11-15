@@ -5,6 +5,9 @@
  * @link        http://milesj.me/code/mootools/decoda
  */
 
+(function() {
+	"use strict";
+
 /**
  * Creates a lightweight textarea editor with toolbar functionality for the Decoda markup language.
  *
@@ -13,7 +16,7 @@
  * @uses	MooTools/More/Element.Forms
  * @uses	MooTools/More/Element.Shortcuts
  */
-var Decoda = new Class({
+window.Decoda = new Class({
 	Implements: [Events, Options],
 
 	/**
@@ -175,7 +178,10 @@ var Decoda = new Class({
 		blacklist = Array.from(blacklist) || [];
 
 		var ul = new Element('ul.decoda-toolbar').addClass('toolbar-' + id),
-			li, button, menu, anchor;
+			li,
+			button,
+			menu,
+			anchor;
 
 		// Create menu using the commands
 		commands.each(function(command) {
@@ -277,6 +283,10 @@ var Decoda = new Class({
 	clean: function() {
 		var value = String.from(this.textarea.get('value'));
 
+		// Normalizes new lines
+		value = value.replace(/\r\n/g, "\n"); // DOS to Unix
+		value = value.replace(/\r/g, "\n"); // Mac to Unix
+
 		// Remove extraneous newlines
 		value = value.replace(/\n{3,}/g, "\n\n");
 
@@ -298,14 +308,14 @@ var Decoda = new Class({
 	 * @return {Decoda}
 	 */
 	insertTag: function(tag) {
-		var selected,
-			defaultValue,
+		var defaultValue,
 			contentValue,
-			field = tag.promptFor || 'default';
+			field = tag.promptFor || 'default',
+			answer;
 
 		// Grab a value from the prompt
 		if (tag.prompt) {
-			var answer = prompt(tag.prompt);
+			answer = prompt(tag.prompt);
 
 			// Exit if prompt is cancelled (null)
 			if (answer === null) {
@@ -327,9 +337,10 @@ var Decoda = new Class({
 		// Text is selected
 		var markup = this.formatTag(tag, defaultValue, contentValue),
 			open = this.formatTag(tag, defaultValue, contentValue, 'open'),
-			close = this.formatTag(tag, defaultValue, contentValue, 'close');
+			close = this.formatTag(tag, defaultValue, contentValue, 'close'),
+			selected = this.textarea.getSelectedText();
 
-		if (selected = this.textarea.getSelectedText()) {
+		if (selected) {
 			if (tag.selfClose) {
 				this.textarea.insertAtCursor(selected + markup);
 
@@ -373,11 +384,12 @@ var Decoda = new Class({
 			o = this.options.open,
 			c = this.options.close,
 			open = o + t,
-			close = o + '/' + t + c;
+			close = o + '/' + t + c,
+			field;
 
 		// Only append a default attribute if the value from a prompt is valid
 		if (tag.hasDefault) {
-			var field = tag.promptFor || 'default';
+			field = tag.promptFor || 'default';
 
 			if (tag.prompt && field === 'default') {
 				if (defaultValue) {
@@ -480,7 +492,7 @@ Decoda.controls = {};
 /**
  * Default standard tags.
  */
-Decoda.filters.default =  [
+Decoda.filters.defaults =  [
 	{ tag: 'b', title: 'Bold', key: 'b' },
 	{ tag: 'i', title: 'Italics', key: 'i' },
 	{ tag: 'u', title: 'Underline', key: 'u' },
@@ -551,7 +563,7 @@ Decoda.filters.text = [
 		],
 		onInsert: function(value, field) {
 			if (field === 'default') {
-				return /(?:#[0-9a-f]{3,6}|[a-z]+)/i.exec(value) ? value : null;
+				return (/(?:#[0-9a-f]{3,6}|[a-z]+)/i).exec(value) ? value : null;
 			}
 
 			return value;
@@ -762,3 +774,5 @@ Decoda.controls.editor = [
 		}
 	}
 ];
+
+}());
