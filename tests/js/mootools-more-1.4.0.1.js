@@ -1,6 +1,6 @@
 // MooTools: the javascript framework.
-// Load this file's selection again by visiting: http://mootools.net/more/e45781a08eb2f17fed7296ba5808309f 
-// Or build this file again with packager using: packager build More/Element.Forms
+// Load this file's selection again by visiting: http://mootools.net/more/7c0c7033e1f4ad518e4afb3183380615
+// Or build this file again with packager using: packager build More/Element.Forms More/Element.Shortcuts
 /*
 ---
 copyrights:
@@ -30,4 +30,9 @@ this.set("value",c.substring(0,d.start)+b+c.substring(d.end,c.length));if(a!==fa
 }return this;},insertAroundCursor:function(b,a){b=Object.append({before:"",defaultMiddle:"",after:""},b);var c=this.getSelectedText()||b.defaultMiddle;
 var g=this.getSelectedRange();var f=this.get("value");if(g.start==g.end){this.set("value",f.substring(0,g.start)+b.before+c+b.after+f.substring(g.end,f.length));
 this.selectRange(g.start+b.before.length,g.end+b.before.length+c.length);}else{var d=f.substring(g.start,g.end);this.set("value",f.substring(0,g.start)+b.before+d+b.after+f.substring(g.end,f.length));
-var e=g.start+b.before.length;if(a!==false){this.selectRange(e,e+d.length);}else{this.setCaretPosition(e+f.length);}}return this;}});
+var e=g.start+b.before.length;if(a!==false){this.selectRange(e,e+d.length);}else{this.setCaretPosition(e+f.length);}}return this;}});Element.implement({isDisplayed:function(){return this.getStyle("display")!="none";
+},isVisible:function(){var a=this.offsetWidth,b=this.offsetHeight;return(a==0&&b==0)?false:(a>0&&b>0)?true:this.style.display!="none";},toggle:function(){return this[this.isDisplayed()?"hide":"show"]();
+},hide:function(){var b;try{b=this.getStyle("display");}catch(a){}if(b=="none"){return this;}return this.store("element:_originalDisplay",b||"").setStyle("display","none");
+},show:function(a){if(!a&&this.isDisplayed()){return this;}a=a||this.retrieve("element:_originalDisplay")||"block";return this.setStyle("display",(a=="none")?"block":a);
+},swapClass:function(a,b){return this.removeClass(a).addClass(b);}});Document.implement({clearSelection:function(){if(window.getSelection){var a=window.getSelection();
+if(a&&a.removeAllRanges){a.removeAllRanges();}}else{if(document.selection&&document.selection.empty){try{document.selection.empty();}catch(b){}}}}});

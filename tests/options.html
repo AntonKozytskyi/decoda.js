@@ -18,7 +18,7 @@
 			</div>
 
 			<div class="input">
-				<label for="textarea-2">onRender Event:</label>
+				<label for="textarea-2">onRenderToolbar Event:</label>
 				<textarea id="textarea-2" cols="100" rows="10"></textarea>
 			</div>
 
@@ -46,11 +46,11 @@
 			}).defaults();
 
 			new Decoda('textarea-2', {
-				onRender: function(list) {
-					console.log('onRender', list);
+				onRenderToolbar: function(ul) {
+					console.log('onRender', ul);
 
-					list.getElements('button').each(function(button) {
-						button.set('html', button.get('html') + ' ' + button.get('title'));
+					ul.getElements('button').each(function(button) {
+						button.set('html', button.get('title'));
 					});
 				}
 			}).defaults();

@@ -50,26 +50,24 @@
 
 	<script type="text/javascript">
 		window.addEvent('domready', function() {
-			new Decoda('textarea-1').addFilters(Decoda.filters.default);
+			new Decoda('textarea-1').addFilters('default', Decoda.filters.default);
 
-			new Decoda('textarea-2').addFilters(Decoda.filters.block);
+			new Decoda('textarea-2').addFilters('block', Decoda.filters.block);
 
-			new Decoda('textarea-3').addFilters(Decoda.filters.text);
+			new Decoda('textarea-3').addFilters('text', Decoda.filters.text);
 
 			new Decoda('textarea-4')
-				.addFilters(Decoda.filters.email)
-				.addFilters(Decoda.filters.image)
-				.addFilters(Decoda.filters.url)
-				.addFilters(Decoda.filters.video);
+				.addFilters('email', Decoda.filters.email)
+				.addFilters('image', Decoda.filters.image)
+				.addFilters('url', Decoda.filters.url)
+				.addFilters('video', Decoda.filters.video);
 
 			new Decoda('textarea-5')
-				.addFilters(Decoda.filters.list)
-				.addFilters(Decoda.filters.quote)
-				.addFilters(Decoda.filters.code);
+				.addFilters('list', Decoda.filters.list)
+				.addFilters('quote', Decoda.filters.quote)
+				.addFilters('code', Decoda.filters.code);
 
-			new Decoda('textarea-6')
-				.addControls(Decoda.controls.editor)
-				.addControls(Decoda.controls.formatting);
+			new Decoda('textarea-6').addControls('editor', Decoda.controls.editor);
 		});
 	</script>
 </body>

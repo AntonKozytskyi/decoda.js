@@ -736,6 +736,11 @@ Decoda.controls.editor = [
 		key: 'h',
 		title: 'Help',
 		onClick: function(command, button) {
+			if (!this.tags.length) {
+				alert('No tag filters have been loaded.');
+				return;
+			}
+
 			this.container.hide();
 			this.preview.hide();
 
