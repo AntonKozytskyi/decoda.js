@@ -14,7 +14,7 @@ use \mjohnson\packager\minifiers\CssMinifier;
 
 // Fetch variables
 $minify = isset($_GET['minify']) ? (bool) $_GET['minify'] : true;
-$zip = isset($_GET['zip']) ? (bool) $_GET['zip'] : true;
+$zip = isset($_GET['zip']) ? (bool) $_GET['zip'] : false;
 
 $packager = new Packager(dirname(__DIR__));
 
@@ -37,10 +37,10 @@ if ($packager->package(array('Css'), array('outputFile' => 'bin/{name}-{version}
 }
 
 // Archive the output into a zip file
-/*if ($zip) {
+if ($zip) {
 	$archive = array(
-		array('path' => 'bin/decoda.min.css', 'folder' => 'css/'),
-		array('path' => 'bin/decoda.min.js', 'folder' => 'js/'),
+		array('path' => 'bin/{name}-{version}.min.css', 'folder' => 'css/'),
+		array('path' => 'bin/{name}-{version}.min.js', 'folder' => 'js/'),
 		array('path' => 'src/img/icons-black.png', 'folder' => 'img/'),
 		array('path' => 'src/img/icons-white.png', 'folder' => 'img/')
 	);
@@ -50,4 +50,4 @@ if ($packager->package(array('Css'), array('outputFile' => 'bin/{name}-{version}
 	} else {
 		echo 'Contents failed to archive';
 	}
-}*/
+}
