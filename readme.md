@@ -6,6 +6,7 @@ A lightweight textarea editor with toolbar functionality for the Decoda markup l
 
 * MooTools 1.4
 * More/Element.Forms
+* More/Element.Shortcuts
 
 ## Contributors ##
 
