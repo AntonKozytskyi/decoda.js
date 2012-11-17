@@ -15,7 +15,6 @@
  * @uses	MooTools/Core
  * @uses	MooTools/More/Element.Forms
  * @uses	MooTools/More/Element.Shortcuts
- * @uses	MooTools/More/Element.Event.Pseudo.Keys
  */
 window.Decoda = new Class({
 	Implements: [Events, Options],
@@ -202,12 +201,11 @@ window.Decoda = new Class({
 			button.addEvent('click', (command.onClick || this.insertTag).bind(this, command, button));
 
 			if (command.key) {
-				button.set('title', button.get('title') + ' (Shift + ' + command.key.toUpperCase() + ')');
+				button.set('title', button.get('title') + ' (Ctrl + ' + command.key.toUpperCase() + ')');
 
-				this.textarea.addEvent('keydown:keys(shift+' + command.key + ')', function(e) {
-					e.stop();
-					this.fireEvent('click');
-				}.bind(button));
+				this.textarea.addEvent('keydown', function(e) {
+					this._listenKeydown.attempt([e, command, button], this);
+				}.bind(this));
 			}
 
 			if (command.className) {
@@ -320,7 +318,7 @@ window.Decoda = new Class({
 	 */
 	insertTag: function(tag, button) {
 		var defaultValue,
-			contentValue,
+			contentValue = this.textarea.getSelectedText(),
 			field = tag.promptFor || 'default',
 			answer;
 
@@ -345,22 +343,19 @@ window.Decoda = new Class({
 			}
 		}
 
-		// Text is selected
-		var markup = this.formatTag(tag, defaultValue, contentValue),
-			open = this.formatTag(tag, defaultValue, contentValue, 'open'),
-			close = this.formatTag(tag, defaultValue, contentValue, 'close'),
-			selected = this.textarea.getSelectedText();
+		var markup = this.formatTag(tag, defaultValue, contentValue);
 
-		if (selected) {
+		// Text is selected
+		if (this.textarea.getSelectedText()) {
 			if (tag.selfClose) {
-				this.textarea.insertAtCursor(selected + markup);
+				this.textarea.insertAroundCursor({
+					before: '',
+					after: markup,
+					defaultMiddle: ''
+				});
 
 			} else {
-				this.textarea.insertAroundCursor({
-					before: open,
-					after: close,
-					defaultMiddle: selected
-				});
+				this.textarea.insertAtCursor(markup);
 			}
 
 		// Insert at cursor
@@ -369,6 +364,8 @@ window.Decoda = new Class({
 
 			// Move the caret in between the tags
 			if (!tag.selfClose) {
+				var close = this.formatTag(tag, defaultValue, contentValue, 'close');
+
 				this.textarea.setCaretPosition(this.textarea.getCaretPosition() - close.length);
 			}
 		}
@@ -490,6 +487,30 @@ window.Decoda = new Class({
 		}).post();
 
 		this.fireEvent('renderPreview');
+	},
+
+	/**
+	 * Callback triggered each time a key is pressed.
+	 * Will check for ctrl + key events.
+	 *
+	 * @param {Event} e
+	 * @param {Object} command
+	 * @param {Element} button
+	 * @return {Boolean}
+	 * @private
+	 */
+	_listenKeydown: function(e, command, button) {
+		if (e.control && e.key === command.key) {
+			e.stop();
+
+			if (command.onClick) {
+				command.onClick.attempt([command, button], this);
+			} else {
+				this.insertTag(command, button);
+			}
+
+			return false;
+		}
 	}
 
 });
@@ -621,7 +642,6 @@ Decoda.filters.list = [
 Decoda.filters.quote = [
 	{
 		tag: 'quote',
-		key: 'q',
 		title: 'Quote Block',
 		prompt: 'Author:',
 		hasDefault: true,
@@ -651,7 +671,6 @@ Decoda.filters.code = [
 Decoda.filters.email = [
 	{
 		tag: 'email',
-		key: 'e',
 		title: 'Email',
 		prompt: 'Email Address:',
 		hasDefault: true,
@@ -666,7 +685,6 @@ Decoda.filters.email = [
 Decoda.filters.url = [
 	{
 		tag: 'url',
-		key: 'l',
 		title: 'URL',
 		prompt: 'Web Address:',
 		hasDefault: true,
@@ -681,7 +699,6 @@ Decoda.filters.url = [
 Decoda.filters.image = [
 	{
 		tag: 'img',
-		key: 'm',
 		title: 'Image',
 		prompt: 'Image URL:',
 		examples: ['[img][/img]', '[img width="250" height="15%"][/img]'],
@@ -695,7 +712,6 @@ Decoda.filters.image = [
 Decoda.filters.video = [
 	{
 		tag: 'video',
-		key: 'v',
 		title: 'Video',
 		prompt: 'Video Code:',
 		promptFor: 'content',
@@ -717,7 +733,7 @@ Decoda.filters.video = [
 Decoda.controls.editor = [
 	{
 		tag: 'preview',
-		key: 'p',
+		key: 'e',
 		title: 'Preview',
 		onClick: function(command, button) {
 			if (!this.options.previewUrl) {
@@ -743,7 +759,6 @@ Decoda.controls.editor = [
 		}
 	}, {
 		tag: 'clean',
-		key: 'c',
 		title: 'Clean',
 		onClick: function() {
 			this.disableToolbar();
@@ -756,7 +771,6 @@ Decoda.controls.editor = [
 		}
 	}, {
 		tag: 'help',
-		key: 'h',
 		title: 'Help',
 		onClick: function(command, button) {
 			if (!this.tags.length) {
