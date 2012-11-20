@@ -27,19 +27,26 @@ if ($minify) {
 if ($packager->package(array('Js'), array('outputFile' => 'bin/{name}-{version}.min.js'))) {
 	echo 'Javascript packaged<br>';
 } else {
-	echo 'Javascript failed to packaged<br>';
+	echo 'Javascript failed to package<br>';
 }
 
 if ($packager->package(array('Css'), array('outputFile' => 'bin/{name}-{version}.min.css'))) {
 	echo 'CSS packaged<br>';
 } else {
-	echo 'CSS failed to packaged<br>';
+	echo 'CSS failed to package<br>';
+}
+
+if ($packager->package(array('Css.IE'), array('outputFile' => 'bin/{name}-ie-{version}.min.css'))) {
+	echo 'CSS.IE packaged<br>';
+} else {
+	echo 'CSS.IE failed to package<br>';
 }
 
 // Archive the output into a zip file
 if ($zip) {
 	$archive = array(
 		array('path' => 'bin/{name}-{version}.min.css', 'folder' => 'css/'),
+		array('path' => 'bin/{name}-ie-{version}.min.css', 'folder' => 'css/'),
 		array('path' => 'bin/{name}-{version}.min.js', 'folder' => 'js/'),
 		array('path' => 'src/img/icons-black.png', 'folder' => 'img/'),
 		array('path' => 'src/img/icons-white.png', 'folder' => 'img/'),

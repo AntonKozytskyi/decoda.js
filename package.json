@@ -18,6 +18,12 @@
 			"path": "css/decoda.css",
 			"type": "css"
 		},
+		"Css.IE": {
+			"title": "Css - IE",
+			"description": "Decoda CSS for Internet Explorer 8 and below.",
+			"path": "css/decoda-ie.css",
+			"type": "css"
+		},
 		"Js": {
 			"title": "Js",
 			"description": "Decoda MooTools Class.",
