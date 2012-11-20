@@ -713,16 +713,20 @@ Decoda.filters.video = [
 	{
 		tag: 'video',
 		title: 'Video',
-		prompt: 'Video Code:',
+		prompt: 'Video ID:',
 		promptFor: 'content',
 		hasDefault: true,
-		examples: ['[video="youtube"]videoCode[/video]'],
-		attributes: ['default'],
+		examples: ['[video="youtube"]ID[/video]', '[youtube size="large"]ID[/youtube]', '[veoh size="small"]ID[/veoh]'],
+		attributes: ['default', 'size (optional)'],
 		options: [
-			{ title: 'YouTube', defaultValue: 'youtube', className: 'video-youtube' },
-			{ title: 'Vimeo', defaultValue: 'vimeo', className: 'video-vimeo' },
-			{ title: 'Veoh', defaultValue: 'veoh', className: 'video-veoh' },
-			{ title: 'LiveLeak', defaultValue: 'liveleak', className: 'video-liveleak' }
+			{ tag: 'youtube', title: 'YouTube', hasDefault: false, className: 'video-youtube' },
+			{ tag: 'vimeo', title: 'Vimeo', hasDefault: false, className: 'video-vimeo' },
+			{ tag: 'veoh', title: 'Veoh', hasDefault: false, className: 'video-veoh' },
+			{ tag: 'liveleak', title: 'LiveLeak', hasDefault: false, className: 'video-liveleak' },
+			{ tag: 'dailymotion', title: 'Daily Motion', hasDefault: false, className: 'video-dailymotion' },
+			{ tag: 'collegehumor', title: 'College Humor', hasDefault: false, className: 'video-collegehumor' },
+			{ tag: 'myspace', title: 'MySpace', hasDefault: false, className: 'video-myspace' },
+			{ tag: 'wegame', title: 'WeGame', hasDefault: false, className: 'video-wegame' }
 		]
 	}
 ];
