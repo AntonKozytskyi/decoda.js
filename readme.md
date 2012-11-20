@@ -4,9 +4,17 @@ A lightweight textarea editor with toolbar functionality for the Decoda markup l
 
 ## Requirements ##
 
-* MooTools 1.4
+MooTools 1.4
+* Core
 * More/Element.Forms
 * More/Element.Shortcuts
+
+Browsers
+* Chrome 9+
+* Firefox 4+
+* Safari 5.1+
+* Opera 10+
+* Internet Explorer 8+
 
 ## Contributors ##
 

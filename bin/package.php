@@ -42,7 +42,9 @@ if ($zip) {
 		array('path' => 'bin/{name}-{version}.min.css', 'folder' => 'css/'),
 		array('path' => 'bin/{name}-{version}.min.js', 'folder' => 'js/'),
 		array('path' => 'src/img/icons-black.png', 'folder' => 'img/'),
-		array('path' => 'src/img/icons-white.png', 'folder' => 'img/')
+		array('path' => 'src/img/icons-white.png', 'folder' => 'img/'),
+		'license.md',
+		'readme.md'
 	);
 
 	if ($packager->archive('bin/{name}-{version}', $archive)) {
