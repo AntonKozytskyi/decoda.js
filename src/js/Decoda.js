@@ -532,6 +532,7 @@ Decoda.filters.defaults =  [
 	{ tag: 'sub', title: 'Subscript' },
 	{ tag: 'sup', title: 'Superscript' },
 	{ tag: 'abbr', title: 'Abbreviation', hasDefault: true, attributes: ['default'] },
+	{ tag: 'time', title: 'Timestamp', prompt: 'Date:', promptFor: 'content' },
 	{ tag: 'br', title: 'Line Break', selfClose: true },
 	{ tag: 'hr', title: 'Horizontal Break', selfClose: true }
 ];

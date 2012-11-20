@@ -37,7 +37,7 @@
 	top: 25px;
 	left: 2px;
 	z-index: 10;
-	width: 100px;
+	width: 125px;
 	background: rgba(255, 255, 255, .95);
 	box-shadow: 0 0 4px #4e4e4e;
 	border-radius: 2px; }
@@ -96,6 +96,7 @@
 .decoda-editor .tag-abbr span { background-position: -96px 0; }
 .decoda-editor .tag-br span { background-position: -112px 0; }
 .decoda-editor .tag-hr span { background-position: -128px 0; }
+.decoda-editor .tag-time span { background-position: -144px 0; }
 
 .decoda-editor .tag-align span { background-position: 0 -16px; }
 .decoda-editor .tag-left span { background-position: -16px -16px; }
