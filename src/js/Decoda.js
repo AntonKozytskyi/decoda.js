@@ -62,6 +62,7 @@ window.Decoda = new Class({
 		close: ']',
 		namespace: '',
 		previewUrl: '',
+		maxNewLines: 3,
 		onSubmit: null,
 		onInsert: null,
 		onRenderToolbar: null,
@@ -289,14 +290,17 @@ window.Decoda = new Class({
 	 * @return {boolean}
 	 */
 	clean: function() {
-		var value = String.from(this.textarea.get('value'));
+		var value = String.from(this.textarea.get('value')),
+			max = this.options.maxNewLines;
 
 		// Normalizes new lines
 		value = value.replace(/\r\n/g, "\n"); // DOS to Unix
 		value = value.replace(/\r/g, "\n"); // Mac to Unix
 
 		// Remove extraneous newlines
-		value = value.replace(/\n{3,}/g, "\n\n");
+		if (max) {
+			value = value.replace(new RegExp("\n{" + (max + 1) + ",}", 'g'), "\n".repeat(max));
+		}
 
 		// Trim trailing whitespace
 		value = value.trim();

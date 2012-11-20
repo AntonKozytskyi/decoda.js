@@ -13,7 +13,7 @@ Browsers
 * Chrome 9+
 * Firefox 4+
 * Safari 5.1+
-* Opera 10+
+* Opera 11+
 * Internet Explorer 8+
 
 ## Contributors ##
