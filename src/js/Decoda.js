@@ -35,6 +35,11 @@ window.Decoda = new Class({
 	textarea: null,
 
 	/**
+	 * Parent form.
+	 */
+	form: null,
+
+	/**
 	 * Textarea pane.
 	 */
 	container: null,
@@ -65,6 +70,7 @@ window.Decoda = new Class({
 		maxNewLines: 3,
 		onSubmit: null,
 		onInsert: null,
+		onInitialize: null,
 		onRenderToolbar: null,
 		onRenderPreview: null,
 		onRenderHelp: null
@@ -83,6 +89,8 @@ window.Decoda = new Class({
 		if (!this.textarea) {
 			throw new Error('Invalid textarea');
 		}
+
+		this.form = this.textarea.getParent('form');
 
 		// Build toolbars
 		this.editor = new Element('div.decoda-editor');
@@ -104,8 +112,10 @@ window.Decoda = new Class({
 
 		// Add onSubmit event to the parent form
 		if (this.$events.submit) {
-			this.textarea.getParent('form').addEvent('submit', this.$events.submit[0].bind(this));
+			this.form.addEvent('submit', this.$events.submit[0].bind(this));
 		}
+
+		this.fireEvent('initialize');
 	},
 
 	/**
@@ -337,7 +347,7 @@ window.Decoda = new Class({
 
 			// Trigger callback on the value
 			if (typeOf(tag.onInsert) === 'function') {
-	            answer = tag.onInsert(answer, field);
+				answer = tag.onInsert(answer, field);
 			}
 
 			if (field === 'default') {
