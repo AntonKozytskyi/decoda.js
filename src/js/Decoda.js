@@ -169,7 +169,7 @@ window.Decoda = new Class({
 		} else {
 			this.buildToolbar(filter, tags, blacklist);
 
-			tags.each(function(tag) {
+			Object.each(tags, function(tag) {
 				this.tags.push(tag);
 			}.bind(this));
 		}
@@ -195,7 +195,7 @@ window.Decoda = new Class({
 			anchor;
 
 		// Create menu using the commands
-		Array.from(commands).each(function(command) {
+		Object.each(commands, function(command) {
 			if (blacklist.indexOf(command.tag) >= 0) {
 				return;
 			}
@@ -550,7 +550,8 @@ Decoda.filters.defaults = {
 		title: 'Abbreviation',
 		hasDefault: true,
 		prompt: 'Title:',
-		attributes: ['default']
+		attributes: ['default'],
+		examples: ['[abbr="Hyper-Text Markup Language"]HTML[/abbr]']
 	},
 	time: {
 		tag: 'time',
