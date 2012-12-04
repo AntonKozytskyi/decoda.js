@@ -545,8 +545,19 @@ Decoda.filters.defaults = {
 	s: { tag: 's', title: 'Strike-Through', key: 's' },
 	sub: { tag: 'sub', title: 'Subscript' },
 	sup: { tag: 'sup', title: 'Superscript' },
-	abbr: { tag: 'abbr', title: 'Abbreviation', hasDefault: true, attributes: ['default'] },
-	time: { tag: 'time', title: 'Timestamp', prompt: 'Date:', promptFor: 'content' },
+	abbr: {
+		tag: 'abbr',
+		title: 'Abbreviation',
+		hasDefault: true,
+		prompt: 'Title:',
+		attributes: ['default']
+	},
+	time: {
+		tag: 'time',
+		title: 'Timestamp',
+		prompt: 'Date:',
+		promptFor: 'content'
+	},
 	br: { tag: 'br', title: 'Line Break', selfClose: true },
 	hr: { tag: 'hr', title: 'Horizontal Break', selfClose: true }
 };
@@ -736,7 +747,7 @@ Decoda.filters.video = {
 		promptFor: 'content',
 		hasDefault: true,
 		examples: ['[video="youtube"]ID[/video]', '[youtube size="large"]ID[/youtube]', '[veoh size="small"]ID[/veoh]'],
-		attributes: ['default', 'size (optional)'],
+		attributes: ['default', 'size <span>(optional)</span>'],
 		options: [
 			{ tag: 'youtube', title: 'YouTube', hasDefault: false, className: 'video-youtube' },
 			{ tag: 'vimeo', title: 'Vimeo', hasDefault: false, className: 'video-vimeo' },
