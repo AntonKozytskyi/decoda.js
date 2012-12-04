@@ -195,7 +195,7 @@ window.Decoda = new Class({
 			anchor;
 
 		// Create menu using the commands
-		commands.each(function(command) {
+		Array.from(commands).each(function(command) {
 			if (blacklist.indexOf(command.tag) >= 0) {
 				return;
 			}
@@ -538,24 +538,24 @@ Decoda.controls = {};
 /**
  * Default standard tags.
  */
-Decoda.filters.defaults =  [
-	{ tag: 'b', title: 'Bold', key: 'b' },
-	{ tag: 'i', title: 'Italics', key: 'i' },
-	{ tag: 'u', title: 'Underline', key: 'u' },
-	{ tag: 's', title: 'Strike-Through', key: 's' },
-	{ tag: 'sub', title: 'Subscript' },
-	{ tag: 'sup', title: 'Superscript' },
-	{ tag: 'abbr', title: 'Abbreviation', hasDefault: true, attributes: ['default'] },
-	{ tag: 'time', title: 'Timestamp', prompt: 'Date:', promptFor: 'content' },
-	{ tag: 'br', title: 'Line Break', selfClose: true },
-	{ tag: 'hr', title: 'Horizontal Break', selfClose: true }
-];
+Decoda.filters.defaults = {
+	b: { tag: 'b', title: 'Bold', key: 'b' },
+	i: { tag: 'i', title: 'Italics', key: 'i' },
+	u: { tag: 'u', title: 'Underline', key: 'u' },
+	s: { tag: 's', title: 'Strike-Through', key: 's' },
+	sub: { tag: 'sub', title: 'Subscript' },
+	sup: { tag: 'sup', title: 'Superscript' },
+	abbr: { tag: 'abbr', title: 'Abbreviation', hasDefault: true, attributes: ['default'] },
+	time: { tag: 'time', title: 'Timestamp', prompt: 'Date:', promptFor: 'content' },
+	br: { tag: 'br', title: 'Line Break', selfClose: true },
+	hr: { tag: 'hr', title: 'Horizontal Break', selfClose: true }
+};
 
 /**
  * Text and font related tags.
  */
-Decoda.filters.text = [
-	{
+Decoda.filters.text = {
+	font: {
 		tag: 'font',
 		title: 'Font Family',
 		prompt: 'Font:',
@@ -570,7 +570,8 @@ Decoda.filters.text = [
 			{ title: 'Times', defaultValue: 'Times', className: 'font-times', prompt: false },
 			{ title: 'Helvetica', defaultValue: 'Helvetica', className: 'font-helvetica', prompt: false }
 		]
-	}, {
+	},
+	size: {
 		tag: 'size',
 		title: 'Text Size',
 		prompt: 'Size:',
@@ -590,7 +591,8 @@ Decoda.filters.text = [
 
 			return value;
 		}
-	}, {
+	},
+	color: {
 		tag: 'color',
 		title: 'Text Color',
 		prompt: 'Hex Code:',
@@ -615,7 +617,8 @@ Decoda.filters.text = [
 
 			return value;
 		}
-	}, {
+	},
+	heading: {
 		tag: 'h1',
 		title: 'Heading',
 		examples: ['[h1][/h1], [h2][/h2], [h3][/h3], [h4][/h4], [h5][/h5], [h6][/h6]'],
@@ -628,34 +631,34 @@ Decoda.filters.text = [
 			{ tag: 'h6', title: '6th', className: 'heading-h6' }
 		]
 	}
-];
+};
 
 /**
  * Block and positioning related tags.
  */
-Decoda.filters.block = [
-	{ tag: 'left', title: 'Left Align' },
-	{ tag: 'center', title: 'Center Align' },
-	{ tag: 'right', title: 'Right Align' },
-	{ tag: 'justify', title: 'Justify Align' },
-	{ tag: 'hide', title: 'Hide' },
-	{ tag: 'spoiler', title: 'Spoiler' }
-];
+Decoda.filters.block = {
+	left: { tag: 'left', title: 'Left Align' },
+	center: { tag: 'center', title: 'Center Align' },
+	right: { tag: 'right', title: 'Right Align' },
+	justify: { tag: 'justify', title: 'Justify Align' },
+	hide: { tag: 'hide', title: 'Hide' },
+	spoiler: { tag: 'spoiler', title: 'Spoiler' }
+};
 
 /**
  * List item related tags.
  */
-Decoda.filters.list = [
-	{ tag: 'list', title: 'Unordered List' },
-	{ tag: 'olist', title: 'Ordered List' },
-	{ tag: 'li', title: 'List Item' }
-];
+Decoda.filters.list = {
+	list: { tag: 'list', title: 'Unordered List' },
+	olist: { tag: 'olist', title: 'Ordered List' },
+	li: { tag: 'li', title: 'List Item' }
+};
 
 /**
  * Quote related tags.
  */
-Decoda.filters.quote = [
-	{
+Decoda.filters.quote = {
+	quote: {
 		tag: 'quote',
 		title: 'Quote Block',
 		prompt: 'Author:',
@@ -663,28 +666,29 @@ Decoda.filters.quote = [
 		examples: ['[quote][/quote]', '[quote="Author"][/quote]', '[quote date="12/12/2012"][/quote]'],
 		attributes: ['default <span>(optional)</span>', 'date <span>(optional)</span>']
 	}
-];
+};
 
 /**
  * Code and variable related tags.
  */
-Decoda.filters.code = [
-	{
+Decoda.filters.code = {
+	code: {
 		tag: 'code',
 		title: 'Code Block',
 		examples: ['[code][/code]', '[code="html"][/code]', '[code hl="1,5,10"][/code]'],
 		attributes: ['default <span>(optional)</span>', 'hl <span>(optional)</span>']
-	}, {
+	},
+	var: {
 		tag: 'var',
 		title: 'Variable'
 	}
-];
+};
 
 /**
  * Email related tags.
  */
-Decoda.filters.email = [
-	{
+Decoda.filters.email = {
+	email: {
 		tag: 'email',
 		title: 'Email',
 		prompt: 'Email Address:',
@@ -692,13 +696,13 @@ Decoda.filters.email = [
 		examples: ['[email]email@domain.com[/email]', '[email="email@domain.com"][/email]'],
 		attributes: ['default <span>(optional)</span>']
 	}
-];
+};
 
 /**
  * URL related tags.
  */
-Decoda.filters.url = [
-	{
+Decoda.filters.url = {
+	url: {
 		tag: 'url',
 		title: 'URL',
 		prompt: 'Web Address:',
@@ -706,26 +710,26 @@ Decoda.filters.url = [
 		examples: ['[url]http://domain.com[/url]', '[url="http://domain.com"][/url]'],
 		attributes: ['default <span>(optional)</span>']
 	}
-];
+};
 
 /**
  * Image related tags.
  */
-Decoda.filters.image = [
-	{
+Decoda.filters.image = {
+	img: {
 		tag: 'img',
 		title: 'Image',
 		prompt: 'Image URL:',
 		examples: ['[img][/img]', '[img width="250" height="15%"][/img]'],
 		attributes: ['width <span>(optional)</span>', 'height <span>(optional)</span>']
 	}
-];
+};
 
 /**
  * Video related tags.
  */
-Decoda.filters.video = [
-	{
+Decoda.filters.video = {
+	video: {
 		tag: 'video',
 		title: 'Video',
 		prompt: 'Video ID:',
@@ -744,13 +748,13 @@ Decoda.filters.video = [
 			{ tag: 'wegame', title: 'WeGame', hasDefault: false, className: 'video-wegame' }
 		]
 	}
-];
+};
 
 /**
  * Editor processing commands.
  */
-Decoda.controls.editor = [
-	{
+Decoda.controls.editor = {
+	preview: {
 		tag: 'preview',
 		key: 'e',
 		title: 'Preview',
@@ -776,7 +780,8 @@ Decoda.controls.editor = [
 
 			button.set('disabled', false);
 		}
-	}, {
+	},
+	clean: {
 		tag: 'clean',
 		title: 'Clean',
 		onClick: function() {
@@ -788,7 +793,8 @@ Decoda.controls.editor = [
 				}.bind(this), 500);
 			}
 		}
-	}, {
+	},
+	help: {
 		tag: 'help',
 		title: 'Help',
 		onClick: function(command, button) {
@@ -817,6 +823,6 @@ Decoda.controls.editor = [
 			button.set('disabled', false);
 		}
 	}
-];
+};
 
 }());
