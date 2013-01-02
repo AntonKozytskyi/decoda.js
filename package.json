@@ -1,7 +1,7 @@
 {
 	"name": "Decoda",
 	"description": "A lightweight textarea editor with toolbar functionality for the Decoda markup language.",
-	"version": "1.1.0",
+	"version": "1.0.0",
 	"link": "http://milesj.me/code/mootools/decoda",
 	"license": "MIT",
 	"sourcePath": "src/",
@@ -12,19 +12,19 @@
 		}
 	],
 	"contents": {
-		"Css": {
+		"css": {
 			"title": "Css",
 			"description": "Decoda CSS.",
 			"path": "css/decoda.css",
 			"type": "css"
 		},
-		"Css.IE": {
+		"css/ie": {
 			"title": "Css - IE",
 			"description": "Decoda CSS for Internet Explorer 8 and below.",
 			"path": "css/decoda-ie.css",
 			"type": "css"
 		},
-		"Js": {
+		"js": {
 			"title": "Js",
 			"description": "Decoda MooTools Class.",
 			"path": "js/Decoda.js",
