@@ -53,6 +53,12 @@ $callback = function(InputInterface $input, OutputInterface $output) {
 		$output->writeln('<error>IE CSS failed to package</error>');
 	}
 
+	if ($packager->package(array('css/theme'), array('outputFile' => 'bin/{name}-theme-{version}.min.css'))) {
+		$output->writeln('<info>Theme CSS packaged</info>');
+	} else {
+		$output->writeln('<error>Theme CSS failed to package</error>');
+	}
+
 	// Archive the output
 	if ($outputFile = $input->getOption('archive')) {
 		$output->writeln('');
@@ -61,6 +67,7 @@ $callback = function(InputInterface $input, OutputInterface $output) {
 		$archive = array(
 			array('path' => 'bin/{name}-{version}.min.css', 'folder' => 'css/'),
 			array('path' => 'bin/{name}-ie-{version}.min.css', 'folder' => 'css/'),
+			array('path' => 'bin/{name}-theme-{version}.min.css', 'folder' => 'css/'),
 			array('path' => 'bin/{name}-{version}.min.js', 'folder' => 'js/'),
 			array('path' => 'src/img/icons-black.png', 'folder' => 'img/'),
 			array('path' => 'src/img/icons-white.png', 'folder' => 'img/'),

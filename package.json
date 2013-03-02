@@ -24,6 +24,12 @@
 			"path": "css/decoda-ie.css",
 			"type": "css"
 		},
+		"css/theme": {
+			"title": "Css - Theme",
+			"description": "Decoda theme specific CSS.",
+			"path": "css/decoda-theme.css",
+			"type": "css"
+		},
 		"js": {
 			"title": "Js",
 			"description": "Decoda MooTools Class.",
