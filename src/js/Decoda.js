@@ -161,7 +161,13 @@ window.Decoda = new Class({
 	 */
 	addFilters: function(filter, tags, blacklist) {
 		if (!tags) {
-			Object.each(Decoda.filters, function(tags, filter) {
+			var filters = Object.clone(Decoda.filters);
+				delete filters.email;
+				delete filters.url;
+				delete filters.image;
+				delete filters.video;
+
+			Object.each(filters, function(tags, filter) {
 				this.addFilters(filter, tags, blacklist);
 			}.bind(this));
 
@@ -764,6 +770,11 @@ Decoda.filters.video = {
 		]
 	}
 };
+
+/**
+ * A combination of email, URL, image and video.
+ */
+Decoda.filters.media = Object.merge({}, Decoda.filters.email, Decoda.filters.url, Decoda.filters.image, Decoda.filters.video);
 
 /**
  * Editor processing commands.
