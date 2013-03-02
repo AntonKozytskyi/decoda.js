@@ -112,6 +112,7 @@
 .decoda-editor .tag-url span { background-position: -48px -32px; }
 .decoda-editor .tag-img span { background-position: -64px -32px; }
 .decoda-editor .tag-video span { background-position: -80px -32px; }
+.decoda-editor .tag-source span { background-position: -96px -32px; }
 
 .decoda-editor .tag-list span { background-position: 0 -48px; }
 .decoda-editor .tag-olist span { background-position: -16px -48px; }
