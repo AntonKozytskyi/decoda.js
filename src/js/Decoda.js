@@ -495,7 +495,7 @@ window.Decoda = new Class({
 				this.container.show();
 				this.enableToolbar();
 
-				alert('An error has occurred while rendering the preview.');
+				alert('An error has occurred while rendering the preview');
 			}.bind(this)
 		}).post();
 
@@ -692,6 +692,10 @@ Decoda.filters.code = {
 	var: {
 		tag: 'var',
 		title: 'Variable'
+	},
+	source: {
+		tag: 'source',
+		title: 'Source Code (Inline)'
 	}
 };
 
@@ -771,7 +775,7 @@ Decoda.controls.editor = {
 		title: 'Preview',
 		onClick: function(command, button) {
 			if (!this.options.previewUrl) {
-				alert('Preview functionality has not been enabled.');
+				alert('Preview functionality has not been enabled');
 				return;
 			}
 
@@ -810,7 +814,7 @@ Decoda.controls.editor = {
 		title: 'Help',
 		onClick: function(command, button) {
 			if (!this.tags.length) {
-				alert('No tag filters have been loaded.');
+				alert('No tag filters have been loaded');
 				return;
 			}
 

@@ -84,7 +84,7 @@ $console = new Application('Decoda', VERSION);
 
 $console->register('package')
 	->setDescription('Compress and package the static assets')
-	->addOption('minify', null, InputOption::VALUE_OPTIONAL, 'Enable static asset minification', true)
+	->addOption('minify', null, InputOption::VALUE_NONE, 'Enable static asset minification')
 	->addOption('archive', null, InputOption::VALUE_OPTIONAL, 'Archive the packaged files into a single zip', 'bin/{name}-{version}')
 	->setCode($callback);
 
