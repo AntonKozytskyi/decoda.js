@@ -40,8 +40,13 @@
 			</div>
 
 			<div class="input">
-				<label for="textarea-6">All Controls:</label>
+				<label for="textarea-6">Table Filters:</label>
 				<textarea id="textarea-6" cols="100" rows="10"></textarea>
+			</div>
+
+			<div class="input">
+				<label for="textarea-7">All Controls:</label>
+				<textarea id="textarea-7" cols="100" rows="10"></textarea>
 			</div>
 
 			<div class="input">
@@ -56,9 +61,11 @@
 				.addFilters('default', Decoda.filters.defaults)
 				.addControls('editor', Decoda.controls.editor);
 
-			new Decoda('textarea-2').addFilters('block', Decoda.filters.block);
+			new Decoda('textarea-2')
+				.addFilters('block', Decoda.filters.block);
 
-			new Decoda('textarea-3').addFilters('text', Decoda.filters.text);
+			new Decoda('textarea-3')
+				.addFilters('text', Decoda.filters.text);
 
 			new Decoda('textarea-4')
 				.addFilters('email', Decoda.filters.email)
@@ -71,7 +78,11 @@
 				.addFilters('quote', Decoda.filters.quote)
 				.addFilters('code', Decoda.filters.code);
 
-			new Decoda('textarea-6').addControls('editor', Decoda.controls.editor);
+			new Decoda('textarea-6')
+				.addFilters('table', Decoda.filters.table)
+				.addControls('editor', Decoda.controls.editor);
+
+			new Decoda('textarea-7').addControls('editor', Decoda.controls.editor);
 		});
 	</script>
 </body>

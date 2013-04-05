@@ -16,7 +16,6 @@
 	background-image: -webkit-gradient(linear, center top, center bottom, color-stop(0, #f9f9f9), color-stop(1, #e1e1e1));
 	background-image: linear-gradient(center top, #f9f9f9 0%, #e1e1e1 100%); }
 
-
 .decoda-toolbars .decoda-toolbar {
 	float: left;
 	display: block;
@@ -28,11 +27,6 @@
 
 .decoda-toolbars .decoda-toolbar > li {
 	float: left;
-	display: block; }
-
-.decoda-toolbars:after {
-	clear: both;
-	content: "";
 	display: block; }
 
 .decoda-toolbars button {

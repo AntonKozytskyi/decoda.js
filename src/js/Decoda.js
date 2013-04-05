@@ -4,7 +4,7 @@
  * @link        http://milesj.me/code/mootools/decoda
  */
 
-(function() {
+(function(window) {
 	"use strict";
 
 /**
@@ -67,6 +67,10 @@ window.Decoda = new Class({
 		namespace: '',
 		previewUrl: '',
 		maxNewLines: 3,
+
+		// Messages
+
+		// Events
 		onSubmit: null,
 		onInsert: null,
 		onInitialize: null,
@@ -666,9 +670,22 @@ Decoda.filters.block = {
  * List item related tags.
  */
 Decoda.filters.list = {
-	list: { tag: 'list', title: 'Unordered List' },
-	olist: { tag: 'olist', title: 'Ordered List' },
-	li: { tag: 'li', title: 'List Item' }
+	list: {
+		tag: 'list',
+		title: 'Unordered List',
+		examples: ['[list][/list]', '[list="upper-alpha"][/list]'],
+		attributes: ['default <span>(optional)</span>']
+	},
+	olist: {
+		tag: 'olist',
+		title: 'Ordered List',
+		examples: ['[olist][/olist]', '[olist="lower-roman"][/olist]'],
+		attributes: ['default <span>(optional)</span>']
+	},
+	li: {
+		tag: 'li',
+		title: 'List Item'
+	}
 };
 
 /**
@@ -695,13 +712,13 @@ Decoda.filters.code = {
 		examples: ['[code][/code]', '[code="html"][/code]', '[code hl="1,5,10"][/code]'],
 		attributes: ['default <span>(optional)</span>', 'hl <span>(optional)</span>']
 	},
+	source: {
+		tag: 'source',
+		title: 'Code Snippet'
+	},
 	var: {
 		tag: 'var',
 		title: 'Variable'
-	},
-	source: {
-		tag: 'source',
-		title: 'Source Code (Inline)'
 	}
 };
 
@@ -741,8 +758,9 @@ Decoda.filters.image = {
 		tag: 'img',
 		title: 'Image',
 		prompt: 'Image URL:',
-		examples: ['[img][/img]', '[img width="250" height="15%"][/img]'],
-		attributes: ['width <span>(optional)</span>', 'height <span>(optional)</span>']
+		promptFor: 'content',
+		examples: ['[img][/img]', '[img="200x200"][/img]', '[img width="250" height="15%"][/img]'],
+		attributes: ['default <span>(optional)</span>', 'width <span>(optional)</span>', 'height <span>(optional)</span>', 'alt <span>(optional)</span>']
 	}
 };
 
@@ -768,6 +786,34 @@ Decoda.filters.video = {
 			{ tag: 'myspace', title: 'MySpace', hasDefault: false, className: 'video-myspace' },
 			{ tag: 'wegame', title: 'WeGame', hasDefault: false, className: 'video-wegame' }
 		]
+	}
+};
+
+/**
+ * Table related tags.
+ */
+Decoda.filters.table = {
+	table: {
+		tag: 'table',
+		title: 'Table',
+		examples: ['[table][/table]', '[table="sortable"][/table] <span>(class)</span>'],
+		attributes: ['default <span>(optional)</span>']
+	},
+	thead: { tag: 'thead', title: 'Table Head' },
+	tbody: { tag: 'tbody', title: 'Table Body' },
+	tfoot: { tag: 'tfoot', title: 'Table Foot' },
+	tr: { tag: 'tr', title: 'Table Row' },
+	td: {
+		tag: 'td',
+		title: 'Table Cell',
+		examples: ['[td][/td]', '[td="3"][/td] <span>(colspan)</span>'],
+		attributes: ['default <span>(optional)</span>']
+	},
+	th: {
+		tag: 'th',
+		title: 'Table Header',
+		examples: ['[th][/th]', '[th="3"][/th] <span>(colspan)</span>'],
+		attributes: ['default <span>(optional)</span>']
 	}
 };
 
@@ -851,4 +897,4 @@ Decoda.controls.editor = {
 	}
 };
 
-}());
+}(window));
