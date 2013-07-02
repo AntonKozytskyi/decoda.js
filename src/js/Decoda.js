@@ -267,6 +267,15 @@ window.Decoda = new Class({
 			this.fireEvent('renderToolbar', ul);
 		}
 
+		// Update z-index on toolbars
+		var toolbars = this.toolbar.getElements('.decoda-toolbar'),
+			z = toolbars.length;
+
+		toolbars.each(function(toolbar) {
+			toolbar.setStyle('z-index', z);
+			z--;
+		});
+
 		return this;
 	},
 

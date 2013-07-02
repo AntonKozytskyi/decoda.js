@@ -27,7 +27,9 @@
 	height: 0;
 	line-height: 0; }
 
-.decoda-toolbars .decoda-toolbar { display: inline-block; }
+.decoda-toolbars .decoda-toolbar {
+	position: relative;
+	display: inline-block; }
 
 .decoda-toolbars .decoda-toolbar li {
 	display: inline-block;
