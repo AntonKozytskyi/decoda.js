@@ -26,4 +26,55 @@ A full list of Decoda tags, features and functionality can be found here: https:
 
 ## Documentation ##
 
-Thorough documentation can be found here: http://milesj.me/code/mootools/decoda
+Instantiate the editor on a textarea element. Call `defaults()` to enable all toolbar functionality.
+
+```javascript
+window.addEvent('domready', function() {
+	new Decoda('textarea').defaults();
+});
+```
+
+Or apply individual toolbars.
+
+```javascript
+window.addEvent('domready', function() {
+	new Decoda('textarea')
+		.addFilters('default', Decoda.filters.defaults)
+		.addFilters('block', Decoda.filters.block)
+		.addFilters('text', Decoda.filters.text)
+		.addControls('editor', Decoda.controls.editor);
+});
+```
+
+Or define custom toolbars, or modify existing ones.
+
+```javascript
+window.addEvent('domready', function() {
+	Decoda.filters.custom.audio = {
+		tag: 'audio',
+		title: 'Audio'
+	};
+
+	Decoda.controls.editor.preview.onClick = function(command, button) {
+		// Custom logic
+	};
+
+	new Decoda('textarea')
+		.addFilters('custom', Decoda.filters.custom)
+		.addControls('editor', Decoda.controls.editor);
+});
+```
+
+The following callbacks can be defined through the constructor: `initialize`, `submit`, `insert`, `renderToolbar`, `renderPreview`, `renderHelp`.
+As well as these options: `open`, `close`, `namespace`, `previewUrl`, `maxNewLines`.
+
+```javascript
+window.addEvent('domready', function() {
+	new Decoda('textarea', {
+		previewUrl: '/ajax/preview',
+		onInitialize: function() {
+			// Do something
+		}
+	}).defaults();
+});
+```
