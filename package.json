@@ -22,6 +22,7 @@
 	"devDependencies": {
 		"grunt": "*",
 		"grunt-contrib-uglify": "*",
-		"grunt-contrib-jshint": "*"
+		"grunt-contrib-jshint": "*",
+		"grunt-contrib-cssmin": "*"
 	}
 }
