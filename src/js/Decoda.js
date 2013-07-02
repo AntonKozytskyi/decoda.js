@@ -711,7 +711,7 @@ Decoda.filters.code = {
 		tag: 'source',
 		title: 'Code Snippet'
 	},
-	var: {
+	'var': {
 		tag: 'var',
 		title: 'Variable'
 	}
@@ -775,8 +775,10 @@ Decoda.filters.video = {
 			{ tag: 'youtube', title: 'YouTube', hasDefault: false, className: 'video-youtube' },
 			{ tag: 'vimeo', title: 'Vimeo', hasDefault: false, className: 'video-vimeo' },
 			{ tag: 'veoh', title: 'Veoh', hasDefault: false, className: 'video-veoh' },
+			{ tag: 'vevo', title: 'Vevo', hasDefault: false, className: 'video-vevo' },
 			{ tag: 'liveleak', title: 'LiveLeak', hasDefault: false, className: 'video-liveleak' },
 			{ tag: 'dailymotion', title: 'Daily Motion', hasDefault: false, className: 'video-dailymotion' },
+			{ tag: 'funnyordie', title: 'Funny or Die', hasDefault: false, className: 'video-funnyordie' },
 			{ tag: 'collegehumor', title: 'College Humor', hasDefault: false, className: 'video-collegehumor' },
 			{ tag: 'myspace', title: 'MySpace', hasDefault: false, className: 'video-myspace' },
 			{ tag: 'wegame', title: 'WeGame', hasDefault: false, className: 'video-wegame' }

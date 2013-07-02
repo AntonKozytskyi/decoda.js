@@ -1,40 +1,27 @@
 {
+	"version": "1.2.0",
 	"name": "Decoda",
 	"description": "A lightweight textarea editor with toolbar functionality for the Decoda markup language.",
-	"version": "1.2.0",
-	"link": "http://milesj.me/code/mootools/decoda",
-	"license": "MIT",
-	"sourcePath": "src/",
-	"authors": [
+	"keywords": ["decoda", "editor", "bbcode"],
+	"copyright": "Copyright 2012, Miles Johnson",
+	"homepage": "http://milesj.me/code/mootools/decoda",
+	"licenses": [
 		{
-			"name": "Miles Johnson",
-			"homepage": "http://milesj.me"
+			"type": "MIT",
+			"url": "https://github.com/milesj/Decoda.js/blob/master/license.md"
 		}
 	],
-	"contents": {
-		"css": {
-			"title": "Css",
-			"description": "Decoda CSS.",
-			"path": "css/decoda.css",
-			"type": "css"
-		},
-		"css/ie": {
-			"title": "Css - IE",
-			"description": "Decoda CSS for Internet Explorer 8 and below.",
-			"path": "css/decoda-ie.css",
-			"type": "css"
-		},
-		"css/theme": {
-			"title": "Css - Theme",
-			"description": "Decoda theme specific CSS.",
-			"path": "css/decoda-theme.css",
-			"type": "css"
-		},
-		"js": {
-			"title": "Js",
-			"description": "Decoda MooTools Class.",
-			"path": "js/Decoda.js",
-			"type": "js"
-		}
+	"author": {
+		"name": "Miles Johnson",
+		"url": "http://milesj.me"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/milesj/Decoda"
+	},
+	"devDependencies": {
+		"grunt": "*",
+		"grunt-contrib-uglify": "*",
+		"grunt-contrib-jshint": "*"
 	}
 }

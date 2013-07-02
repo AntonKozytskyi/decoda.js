@@ -1,9 +1,0 @@
-{
-    "require": {
-        "mjohnson/packager": "*",
-		"symfony/console": "*",
-		"nick4fake/jsmin": "dev-master",
-		"natxet/CssMin": "dev-master"
-    },
-	"minimum-stability": "dev"
-}
