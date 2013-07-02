@@ -5,7 +5,7 @@
  */
 
 (function(window) {
-	"use strict";
+	'use strict';
 
 /**
  * Creates a lightweight textarea editor with toolbar functionality for the Decoda markup language.
@@ -329,12 +329,12 @@ window.Decoda = new Class({
 
 	/**
 	 * Insert a tag into the textarea. If a prompt is defined, grab the value.
+	 * A button element object will be passed as the second argument.
 	 *
 	 * @param {Object} tag
-	 * @param {Element} button
 	 * @return {Decoda}
 	 */
-	insertTag: function(tag, button) {
+	insertTag: function(tag) {
 		var defaultValue,
 			contentValue = this.textarea.getSelectedText(),
 			field = tag.promptFor || 'default',

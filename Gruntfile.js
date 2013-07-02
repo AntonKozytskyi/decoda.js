@@ -15,18 +15,19 @@ module.exports = function(grunt) {
 		jshint: {
 			options: {
 				globals: {
-					Decoda: true
+					Decoda: true,
+					alert: true,
+					prompt: true
 				},
 				browser: true,
 				mootools: true,
 				// enforcing
-				//camelcase: true,
+				camelcase: true,
 				curly: true,
 				eqeqeq: true,
 				immed: true,
 				latedef: true,
 				noempty: true,
-				quotmark: 'single',
 				smarttabs: true,
 				undef: true,
 				unused: true,
@@ -37,7 +38,7 @@ module.exports = function(grunt) {
 				scripturl: true
 			},
 			build: {
-				src: ['src/js/*.js']
+				src: 'src/js/*.js'
 			}
 		}
 	});
