@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        name: '<%= pkg.name.toLowerCase() %>-<%= pkg.version %>',
+        name: '<%= pkg.name.toLowerCase() %>',
         uglify: {
             options: {
                 banner: createBanner() + "\n",
@@ -29,8 +29,8 @@ module.exports = function(grunt) {
             build: {
                 files: {
                     'build/<%= name %>.min.css': 'src/css/decoda.css',
-                    'build/decoda-ie-<%= pkg.version %>.min.css': 'src/css/decoda-ie.css',
-                    'build/decoda-theme-<%= pkg.version %>.min.css': 'src/css/decoda-theme.css'
+                    'build/decoda-ie.min.css': 'src/css/decoda-ie.css',
+                    'build/decoda-theme.min.css': 'src/css/decoda-theme.css'
                 }
             }
         },

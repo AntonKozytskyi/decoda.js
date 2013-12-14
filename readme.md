@@ -1,4 +1,4 @@
-# Decoda v1.3.0 #
+# Decoda v1.3.1 #
 
 A lightweight textarea editor with toolbar functionality for the Decoda markup language.
 
