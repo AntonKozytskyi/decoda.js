@@ -1,89 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Decoda - Multiple Instances</title>
-	<link type="text/css" rel="stylesheet" href="css/style.css">
-	<link type="text/css" rel="stylesheet" href="../src/css/decoda.css">
-	<link type="text/css" rel="stylesheet" href="../src/css/decoda-theme.css">
-	<!--[if lte IE 8]><link type="text/css" rel="stylesheet" href="../src/css/decoda-ie.css"><![endif]-->
-	<script type="text/javascript" src="js/mootools-core-1.4.5.js"></script>
-	<script type="text/javascript" src="js/mootools-more-1.4.0.1.js"></script>
-	<script type="text/javascript" src="../src/js/Decoda.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Decoda - Multiple Instances</title>
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+    <link type="text/css" rel="stylesheet" href="../src/css/decoda.css">
+    <link type="text/css" rel="stylesheet" href="../src/css/decoda-theme.css">
+    <!--[if lte IE 8]><link type="text/css" rel="stylesheet" href="../src/css/decoda-ie.css"><![endif]-->
+    <script type="text/javascript" src="js/mootools-core-1.4.5.js"></script>
+    <script type="text/javascript" src="js/mootools-more-1.4.0.1.js"></script>
+    <script type="text/javascript" src="../src/js/Decoda.js"></script>
 </head>
 <body>
-	<div class="wrapper">
-		<form action="" method="post">
-			<div class="input">
-				<label for="textarea-1">Default Filters:</label>
-				<textarea id="textarea-1" cols="100" rows="10"></textarea>
-			</div>
+    <div class="wrapper">
+        <form action="" method="post">
+            <div class="input">
+                <label for="textarea-1">Default Filters:</label>
+                <textarea id="textarea-1" cols="100" rows="10"></textarea>
+            </div>
 
-			<div class="input">
-				<label for="textarea-2">Block Filters:</label>
-				<textarea id="textarea-2" cols="100" rows="10"></textarea>
-			</div>
+            <div class="input">
+                <label for="textarea-2">Block Filters:</label>
+                <textarea id="textarea-2" cols="100" rows="10"></textarea>
+            </div>
 
-			<div class="input">
-				<label for="textarea-3">Text Filters:</label>
-				<textarea id="textarea-3" cols="100" rows="10"></textarea>
-			</div>
+            <div class="input">
+                <label for="textarea-3">Text Filters:</label>
+                <textarea id="textarea-3" cols="100" rows="10"></textarea>
+            </div>
 
-			<div class="input">
-				<label for="textarea-4">Email/Image/Url/Video Filters:</label>
-				<textarea id="textarea-4" cols="100" rows="10"></textarea>
-			</div>
+            <div class="input">
+                <label for="textarea-4">Email/Image/Url/Video Filters:</label>
+                <textarea id="textarea-4" cols="100" rows="10"></textarea>
+            </div>
 
-			<div class="input">
-				<label for="textarea-5">List/Quote/Code Filters:</label>
-				<textarea id="textarea-5" cols="100" rows="10"></textarea>
-			</div>
+            <div class="input">
+                <label for="textarea-5">List/Quote/Code Filters:</label>
+                <textarea id="textarea-5" cols="100" rows="10"></textarea>
+            </div>
 
-			<div class="input">
-				<label for="textarea-6">Table Filters:</label>
-				<textarea id="textarea-6" cols="100" rows="10"></textarea>
-			</div>
+            <div class="input">
+                <label for="textarea-6">Table Filters:</label>
+                <textarea id="textarea-6" cols="100" rows="10"></textarea>
+            </div>
 
-			<div class="input">
-				<label for="textarea-7">All Controls:</label>
-				<textarea id="textarea-7" cols="100" rows="10"></textarea>
-			</div>
+            <div class="input">
+                <label for="textarea-7">All Controls:</label>
+                <textarea id="textarea-7" cols="100" rows="10"></textarea>
+            </div>
 
-			<div class="input">
-				<button type="submit">Submit</button>
-			</div>
-		</form>
-	</div>
+            <div class="input">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
 
-	<script type="text/javascript">
-		window.addEvent('domready', function() {
-			new Decoda('textarea-1')
-				.addFilters('default', Decoda.filters.defaults)
-				.addControls('editor', Decoda.controls.editor);
+    <script type="text/javascript">
+        window.addEvent('domready', function() {
+            new Decoda('textarea-1')
+                .addFilters('default', Decoda.filters.defaults)
+                .addControls('editor', Decoda.controls.editor);
 
-			new Decoda('textarea-2')
-				.addFilters('block', Decoda.filters.block);
+            new Decoda('textarea-2')
+                .addFilters('block', Decoda.filters.block);
 
-			new Decoda('textarea-3')
-				.addFilters('text', Decoda.filters.text);
+            new Decoda('textarea-3')
+                .addFilters('text', Decoda.filters.text);
 
-			new Decoda('textarea-4')
-				.addFilters('email', Decoda.filters.email)
-				.addFilters('image', Decoda.filters.image)
-				.addFilters('url', Decoda.filters.url)
-				.addFilters('video', Decoda.filters.video);
+            new Decoda('textarea-4')
+                .addFilters('email', Decoda.filters.email)
+                .addFilters('image', Decoda.filters.image)
+                .addFilters('url', Decoda.filters.url)
+                .addFilters('video', Decoda.filters.video);
 
-			new Decoda('textarea-5')
-				.addFilters('list', Decoda.filters.list)
-				.addFilters('quote', Decoda.filters.quote)
-				.addFilters('code', Decoda.filters.code);
+            new Decoda('textarea-5')
+                .addFilters('list', Decoda.filters.list)
+                .addFilters('quote', Decoda.filters.quote)
+                .addFilters('code', Decoda.filters.code);
 
-			new Decoda('textarea-6')
-				.addFilters('table', Decoda.filters.table)
-				.addControls('editor', Decoda.controls.editor);
+            new Decoda('textarea-6')
+                .addFilters('table', Decoda.filters.table)
+                .addControls('editor', Decoda.controls.editor);
 
-			new Decoda('textarea-7').addControls('editor', Decoda.controls.editor);
-		});
-	</script>
+            new Decoda('textarea-7').addControls('editor', Decoda.controls.editor);
+        });
+    </script>
 </body>
 </html>

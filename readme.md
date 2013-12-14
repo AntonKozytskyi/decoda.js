@@ -30,7 +30,7 @@ Instantiate the editor on a textarea element. Call `defaults()` to enable all to
 
 ```javascript
 window.addEvent('domready', function() {
-	new Decoda('textarea').defaults();
+    new Decoda('textarea').defaults();
 });
 ```
 
@@ -38,11 +38,11 @@ Or apply individual toolbars.
 
 ```javascript
 window.addEvent('domready', function() {
-	new Decoda('textarea')
-		.addFilters('default', Decoda.filters.defaults)
-		.addFilters('block', Decoda.filters.block)
-		.addFilters('text', Decoda.filters.text)
-		.addControls('editor', Decoda.controls.editor);
+    new Decoda('textarea')
+        .addFilters('default', Decoda.filters.defaults)
+        .addFilters('block', Decoda.filters.block)
+        .addFilters('text', Decoda.filters.text)
+        .addControls('editor', Decoda.controls.editor);
 });
 ```
 
@@ -50,18 +50,18 @@ Or define custom toolbars, or modify existing ones.
 
 ```javascript
 window.addEvent('domready', function() {
-	Decoda.filters.custom.audio = {
-		tag: 'audio',
-		title: 'Audio'
-	};
+    Decoda.filters.custom.audio = {
+        tag: 'audio',
+        title: 'Audio'
+    };
 
-	Decoda.controls.editor.preview.onClick = function(command, button) {
-		// Custom logic
-	};
+    Decoda.controls.editor.preview.onClick = function(command, button) {
+        // Custom logic
+    };
 
-	new Decoda('textarea')
-		.addFilters('custom', Decoda.filters.custom)
-		.addControls('editor', Decoda.controls.editor);
+    new Decoda('textarea')
+        .addFilters('custom', Decoda.filters.custom)
+        .addControls('editor', Decoda.controls.editor);
 });
 ```
 
@@ -70,11 +70,11 @@ As well as these options: `open`, `close`, `namespace`, `previewUrl`, `maxNewLin
 
 ```javascript
 window.addEvent('domready', function() {
-	new Decoda('textarea', {
-		previewUrl: '/ajax/preview',
-		onInitialize: function() {
-			// Do something
-		}
-	}).defaults();
+    new Decoda('textarea', {
+        previewUrl: '/ajax/preview',
+        onInitialize: function() {
+            // Do something
+        }
+    }).defaults();
 });
 ```
