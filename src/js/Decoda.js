@@ -82,7 +82,7 @@ window.Decoda = new Class({
 	 */
 	initialize: function(id, options) {
 		this.setOptions(options);
-		this.textarea = $(id);
+		this.textarea = document.id(id);
 
 		if (!this.textarea) {
 			throw new Error('Invalid textarea');
