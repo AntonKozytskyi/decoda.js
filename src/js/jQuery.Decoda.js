@@ -159,6 +159,7 @@
         button.bind('click', $.proxy(command.onClick || this.insertTag, this, command, button));
         if (command.key) {
           button.attr('title', button.attr('title') + ' (Ctrl + ' + command.key.toUpperCase() + ')');
+          command.keyCode = command.key.toUpperCase().charCodeAt(0);
           this.textarea.bind('keydown', $.proxy(function(e) {
             this._listenKeydown(e, command, button);
           }, this));
@@ -332,8 +333,9 @@
 
     };
     $$._listenKeydown = function(e, command, button) {
-      if (e.control && e.key === command.key) {
-        e.stop();
+      if (e.ctrlKey && ( ( typeof(e.key) !== 'undefined' && e.key === command.key ) || ( e.keyCode === command.keyCode ) ) ) {
+        e.stopPropagation();
+        e.preventDefault();
         if ($.isFunction(command.onClick)) {
           $.proxy(command.onClick, this, command, button)();
         } else {
