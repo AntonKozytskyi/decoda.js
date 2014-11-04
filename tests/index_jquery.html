@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Decoda - MooTools Editor</title>
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+    <link type="text/css" rel="stylesheet" href="../src/css/decoda.css">
+    <link type="text/css" rel="stylesheet" href="../src/css/decoda-theme.css">
+    <!--[if lte IE 8]><link type="text/css" rel="stylesheet" href="../src/css/decoda-ie.css"><![endif]-->
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/rangyinputs.min.js"></script>
+    <script type="text/javascript" src="../src/js/jQuery.Decoda.js"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <form action="" method="post">
+        <div class="input">
+          <label for="textarea">Content:</label>
+          <textarea id="textarea" cols="100" rows="10"></textarea>
+        </div>
+
+        <div class="input">
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('#textarea').Decoda().defaults();
+      });
+    </script>
+  </body>
+</html>
