@@ -39,6 +39,7 @@
       namespace: '',
       previewUrl: '',
       maxNewLines: 3,
+      submitFullFormOnPreview: false,
       onSubmit: null,
       onInsert: null,
       onInitialize: null,
@@ -178,7 +179,7 @@
               return;
             }
             anchor = this.createElement('a').html('<span></span>' + option.title).attr('href', 'javascript:;').attr('title', option.title);
-            anchor.bind('click', $.proxy(option.onClick || this.insertTag, this, option, anchor))
+            anchor.bind('click', $.proxy(option.onClick || this.insertTag, this, option, anchor));
             if (option.className) {
               anchor.addClass(option.className);
             }
@@ -330,7 +331,30 @@
       }
     };
     $$.renderPreview = function() {
+      this.preview.addClass('loading');
+      var isSubmittedFullyAndWithFileEnctype = !!(this.options.submitFullFormOnPreview && ( typeof this.form.attr('enctype') !== 'undefined' && this.form.attr('enctype') === 'multipart/form-data' ));
+      $.ajax({
+        url: this.options.previewUrl,
+        type: 'post',
+        data: (this.options.submitFullFormOnPreview) ? ( isSubmittedFullyAndWithFileEnctype ? new FormData(this.form[0]) : this.form.serialize() ) : {
+          input: this.textarea.val()
+        },
+        processData: !isSubmittedFullyAndWithFileEnctype,
+        contentType: isSubmittedFullyAndWithFileEnctype ? false : 'application/x-www-form-urlencoded; charset=UTF-8',
+        success: $.proxy(function(response){
+          this.preview.removeClass('loading').html(response);
+        }, this),
+        error: $.proxy(function(xhr,status,error){
+          this.container.show();
+          this.enableToolbar();
 
+          alert('An error has occured while rendering the preview. Error : ' + error);
+        }, this)
+      });
+
+      if($.isFunction(this.options.onRenderPreview)){
+        $.proxy(this.options.onRenderPreview, this)();
+      }
     };
     $$._listenKeydown = function(e, command, button) {
       if (e.ctrlKey && ( ( typeof(e.key) !== 'undefined' && e.key === command.key ) || ( e.keyCode === command.keyCode ) ) ) {
@@ -631,7 +655,7 @@
         onClick: function(command, button) {
           if (!this.tags.length) {
             alert('No tag filters have been loaded');
-            return;
+           return;
           }
 
           this.container.hide();
@@ -645,7 +669,6 @@
             this.help.removeClass('visible').hide();
             this.container.show();
             this.enableToolbar();
-
           } else {
             this.help.addClass('visible').show();
             this.disableToolbar();

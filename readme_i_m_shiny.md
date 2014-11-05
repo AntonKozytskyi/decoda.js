@@ -17,6 +17,19 @@ Browsers
 
 A full list of Decoda tags, features and functionality can be found here: https://github.com/milesj/decoda
 
+## Options list ##
+* **open** : start of a tag, defaults to *[*
+* **close** : end of a tag, defaults to *]*
+* **namespace** : supplementary class applied to the editor, defaults to *none*
+* **previewUrl** : URL to which are performed AJAX calls for preview of content, defaults to *none*
+* **maxNewLines** : How many empty new lines can you have in a row at maximum, during the clean operation, defaults to *3*
+* **submitFullFormOnPreview** : Do we submit the full form on preview, or only submit the textarea through the 'input' key, defaults to *false*
+* **onSubmit** : callback to be called on the form submit, defaults to *none*
+* **onInsert** : callback to be called on a tag insert, defaults to *none*
+* **onRenderToolbar** : callback to be called when rendering a toolbar (usually through addFilters/addControls commands), defaults to *none*
+* **onRenderPreview** : callback to be called when the preview button is clicked, defaults to *none*
+* **onRenderHelp** : callback to be called when the help button is clicked, defaults to *none*
+
 ## Documentation ##
 
 Instantiate the editor on a textarea element. Call `defaults()` to enable all toolbar functionality.
