@@ -4,10 +4,18 @@ A lightweight textarea editor with toolbar functionality for the Decoda markup l
 
 ## Requirements ##
 
-jQuery 1.10.2
+* jQuery 1.10.2+ (no issue detected with version 1.11.1/2.1.1, may be compatible with previous versions)(http://jquery.com/)
+* jQuery Rangy Inputs by Tim Down (https://github.com/timdown/rangyinputs)
 
-Browsers
-* Tests in progress
+Browsers compatibility test
+* Chrome 38 Linux et Chrome 40-dev Windows
+* Aurora 35 Windows (Firefox alpha channel)
+* Opera 26-beta
+* Internet Explorer 10 (IE 8/9 should be OK provided you use jQuery v1. major (support dropped in 2. branch) and don't rely on an enctype of multipart/form-data and FormData)
+* Midori 0.4.6
+* Epiphany 3.4.1 (without keyboard shortcuts support, as Epiphany does not seems to apply event bubbling for shortcuts when the key presses are one on its own shortcuts)
+* Should work seamlessly on most WebKit based browsers to this point, and with jQuery capable browsers.
+* Not working on Lynx, sorry about that.
 
 ## Contributors ##
 
@@ -85,4 +93,21 @@ $(document).ready(function(){
         }
     }).defaults();
 });
+```
+
+You can delay the toolbar adding, as long as you keep the object we provide you at the beginning.
+
+```javascript
+$(document).ready(function(){
+    //Just make sure not to use var here, or you lose the variable due to the function scope
+    myDecodaTextareaObject = $('#textarea').Decoda({
+        previewUrl: '/ajax/preview',
+        onInitialize: function() {
+            alert('I am a perfectly serious individual.');
+        }
+    }).addFilters('block', $.Decoda.filters.block);
+});
+
+//Half a century later, in a galaxy far far away
+myDecodaTextareaObject.addFilters('text', $.Decoda.filters.text);
 ```

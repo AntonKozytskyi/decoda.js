@@ -6,11 +6,12 @@
  *
  * Creates a something something to add a textarea editor with toolbar functionnality
  *
- * @uses jQuery (tested against 1.10.2)
+ * @uses jQuery (tests made against 1.10.2 and 1.11.1)
  * @uses Rangy Inputs (https://github.com/timdown/rangyinputs)
  */
 ;
 (function($) {
+  /* Tidying function */
   var walk = function(string, replacements) {
     var result = string, key;
     for (key in replacements)
@@ -27,48 +28,151 @@
     '&raquo;': /[\ufffd]/g
   };
 
+  /**
+   * Tidies a string by removing some special chars
+   * From MooTools code
+   * @returns {String}
+   */
   String.prototype.tidy = function() {
     walk(this, tidy);
     return this;
   };
+  /* End tidying function */
   $.Decoda = function(el, providedOptions) {
     var $$ = this;
+    /**
+     * Default options
+     * @type {Object}
+     */
     $$.options = {
+      /**
+       * Default tag open char
+       * @type {String}
+       */
       open: '[',
+      /**
+       * Default tag close char
+       * @type {String}
+       */
       close: ']',
+      /**
+       * CSS namespace applied on the editor
+       * @type {String}
+       */
       namespace: '',
+      /**
+       * URL to which send AJAX queries for preview
+       * Disables preview if left empty
+       * @type {String}
+       */
       previewUrl: '',
+      /**
+       * Max number of lines for the tindying process
+       * @type {int}
+       */
       maxNewLines: 3,
+      /**
+       * Do we need to submit the whole form for the preview or only the
+       * textarea ?
+       * @type {boolean}
+       */
       submitFullFormOnPreview: false,
+      /**
+       * Callback on submit
+       * @type {function|null}
+       */
       onSubmit: null,
+      /**
+       * Callback on tag insert
+       * @type {function|null}
+       */
       onInsert: null,
+      /**
+       * Callback on init
+       * @type {function|null}
+       */
       onInitialize: null,
+      /**
+       * Callback on toolbar render
+       * @type {function|null}
+       */
       onRenderToolbar: null,
+      /**
+       * Callback on preview rendering
+       * @type {function|null}
+       */
       onRenderPreview: null,
+      /**
+       * Callback on help rendering
+       * @type {function|null}
+       */
       onRenderHelp: null
     };
+    /**
+     * Static strings used by Rangy Inputs for cursor placement after insert
+     * @type {Object}
+     */
     $$.collapse = {
       collapseToEnd: 'collapseToEnd',
       collapseToStart: 'collapseToStart',
       select: 'select'
     };
+    /**
+     * Full editor container
+     * @type {jQuery}
+     */
     $$.editor = null;
+    /**
+     * Full toolbar container
+     * @type {jQuery}
+     */
     $$.toolbar = null;
+    /**
+     * Textarea reference
+     * @type {jQuery}
+     */
     $$.textarea = null;
+    /**
+     * Form reference
+     * @type {jQuery}
+     */
     $$.form = null;
+    /**
+     * Textarea container
+     * @type {jQuery}
+     * @see $$.textarea
+     */
     $$.container = null;
+    /**
+     * Preview container
+     * @type {jQuery}
+     */
     $$.preview = null;
+    /**
+     * Help container
+     * @type {jQuery}
+     */
     $$.help = null;
+    /**
+     * Loaded tags
+     * @type {Array}
+     */
     $$.tags = [];
 
+    /**
+     * Inits the plugin option and vars
+     * @param {jQuery|DOMElement|String} el
+     * @param {Object} options
+     * @returns
+     */
     $$.init = function(el, options) {
       $.extend(this.options, options);
-      if (typeof el.jquery === 'undefined') {
+      if (typeof el.jquery === 'undefined') { //When provided with a non jQuery element (like String or a raw JS DOM Element, we throws it through jQuery selector
         this.textarea = $(el);
       } else {
         this.textarea = el;
       }
-      if (!this.textarea) {
+      if (!this.textarea||this.textarea.length!==1) {//Now, we don't want more than 1 element at a time per call, or it becomes impossible to know where to add the toolbar, or the text for that instance
         throw new Exception('Invalid textarea');
       }
 
@@ -87,37 +191,59 @@
       this.editor = this.container.parent();
 
       this.container.before(this.toolbar).after(this.preview, this.help);
-      if (this.options.namespace) {
+      if (typeof this.options.namespace === 'string' && this.options.namespace) {//Add namespace if we have a string there
         this.editor.addClass(this.options.namespace);
       }
-      if (this.options.onSubmit) {
+      if ($.isFunction(this.options.onSubmit)) { //Add the submit callback if we have a function in there
         this.form.bind('submit', $.proxy(this.options.onSubmit, this));
       }
-      if ($.isFunction(this.options.onInitialize)) {
+      if ($.isFunction(this.options.onInitialize)) { //Callback on init
         $.proxy(this.options.onInitialize, this)();
       }
     };
+    /**
+     *
+     * @param {String} type
+     * @param {String} klass
+     * @param {String|Iterable} klass
+     * @returns {jQuery}
+     */
     $$.createElement = function(type, klass) {
       var div = $(document.createElement(type));
-      if (typeof klass === 'string') {
+      if (typeof klass === 'string') { //Only one, provided as string
         div.addClass(klass);
-      } else if (typeof klass === 'undefined') {
-        //YAY.
-      } else {
+      } else if (typeof klass === 'undefined') { //Not provided
+      } else { //Provided as an Object or Array
         $.each(klass, $.proxy(function(index, kl) {
-          this.addClass(kl);
+          if (typeof kl === 'string') { //Provided we have a string, let's assume it is a class
+            this.addClass(kl);
+          }
         }, div));
       }
       return div;
     };
+    /**
+     * Creates the default toolbar :
+     * All commands from $.Decoda.controls
+     * All filters from $.Decoda.filters except (email, url, image, video)
+     * @param {Array} blacklist
+     * @returns {Decoda}
+     */
     $$.defaults = function(blacklist) {
       this.addFilters(null, null, blacklist);
       this.addControls(null, null, blacklist);
 
       return this;
     };
+    /**
+     * Add new Controls to the toolbar
+     * @param {String} control
+     * @param {Object} commands
+     * @param {Array} blacklist
+     * @returns {Decoda}
+     */
     $$.addControls = function(control, commands, blacklist) {
-      if (!commands) {
+      if (!commands) { //If not provided, add default ones
         $.each($.Decoda.controls, $.proxy(function(control, commands) {
           this.addControls(control, commands, blacklist);
         }, this));
@@ -126,8 +252,15 @@
       }
       return this;
     };
+    /**
+     * Add new Filters to the toolbar
+     * @param {String} filter
+     * @param {Object} tags
+     * @param {Array} blacklist
+     * @returns {Decoda}
+     */
     $$.addFilters = function(filter, tags, blacklist) {
-      if (!tags) {
+      if (!tags) { //If not provided, add default ones
         var filters = $.extend({}, $.Decoda.filters);
         delete filters.email;
         delete filters.url;
@@ -137,7 +270,7 @@
         $.each(filters, $.proxy(function(filter, tags) {
           this.addFilters(filter, tags, blacklist);
         }, this));
-      } else {
+      } else { //Push each tag through the creation process and add them to the loaded tags list
         this.buildToolbar(filter, tags, blacklist);
         $.each(tags, $.proxy(function(index, tag) {
           this.tags.push(tag);
@@ -145,11 +278,18 @@
       }
       return this;
     };
+    /**
+     * Builds the toolbar element from the structured object
+     * @param {string} id
+     * @param {Object} commands
+     * @param {Array} blacklist
+     * @returns {Decoda}
+     */
     $$.buildToolbar = function(id, commands, blacklist) {
       blacklist = $.isArray(blacklist) ? blacklist : [];
       var ul = this.createElement('ul', ['decoda-toolbar', 'toolbar-' + id]), li, button, menu, anchor;
       $.each(commands, $.proxy(function(index, command) {
-        if (blacklist.indexOf(command.tag) >= 0) {
+        if (blacklist.indexOf(command.tag) >= 0) { //Check against the blacklist
           return;
         }
         li = this.createElement('li');
@@ -157,21 +297,21 @@
           type: 'button',
           title: command.title
         });
+        //Bind the call on button pressing
         button.bind('click', $.proxy(command.onClick || this.insertTag, this, command, button));
-        if (command.key) {
+        if (command.key) { //Bind the keydown event for keyboard shortcuts
           button.attr('title', button.attr('title') + ' (Ctrl + ' + command.key.toUpperCase() + ')');
           command.keyCode = command.key.toUpperCase().charCodeAt(0);
           this.textarea.bind('keydown', $.proxy(function(e) {
             this._listenKeydown(e, command, button);
           }, this));
         }
-        if (command.className) {
+        if (command.className) { //Custom class for elements
           button.addClass(command.className);
         }
         li.append(button);
 
-        //sub
-        if (command.options) {
+        if (command.options) { //Add a submenu if needed
           menu = this.createElement('ul', ['decoda-menu', 'menu-' + command.tag]);
           $.each(command.options, $.proxy(function(index, option) {
             option = $.extend({}, command, option);
@@ -191,13 +331,17 @@
         ul.append(li);
 
       }, this));
-      if (ul[0].hasChildNodes()) {
+      if (ul[0].hasChildNodes()) { //If the ul is not empty, append it to the toolbar
         this.toolbar.append(ul);
-        if ($.isFunction(this.options.onRenderToolbar)) {
+        if(this.help.data('render')){
+          this.help.data('render', false);
+        }
+        if ($.isFunction(this.options.onRenderToolbar)) { //Callback on render
           $.proxy(this.options.onRenderToolbar, this, ul)();
         }
       }
 
+      //Fixes zIndex
       var toolbars = this.toolbar.find('.decoda-toolbar'), z = toolbars.length;
       toolbars.each(function(index, toolbar) {
         $(toolbar).css('zIndex', z);
@@ -205,18 +349,34 @@
       });
       return this;
     };
+    /**
+     * Disables the toolbar
+     * @returns {Decoda}
+     */
     $$.disableToolbar = function() {
       this.toolbar.find('button').each(function(index, node) {
         $(node).prop('disabled', true).parents('li').addClass('disabled');
       });
       return this;
     };
+    /**
+     * Enables the toolbar
+     * @returns {Decoda}
+     */
     $$.enableToolbar = function() {
       this.toolbar.find('button').each(function(index, node) {
         $(node).prop('disabled', false).parents('li').removeClass('disabled');
       });
       return this;
     };
+    /**
+     * Clean the text
+     * Remove Unicode special chars from Word
+     * Transforms specific new lines to unix type new lines
+     * Ensures there is no more than maxNewLines new lines in a row
+     * Trim the value
+     * @returns {Decoda}
+     */
     $$.clean = function() {
       var value = this.textarea.val(), max = this.options.maxNewLines;
       value = value.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
@@ -228,6 +388,12 @@
       this.textarea.val(value);
       return this;
     };
+    /**
+     * Repeat the str cnt times and returns the result
+     * @param {String} str
+     * @param {int} cnt
+     * @returns {String}
+     */
     $$.repeatString = function(str, cnt) {
       var res = '';
       for (cnt; cnt > 0; cnt--) {
@@ -235,15 +401,20 @@
       }
       return res;
     };
+    /**
+     * Inserts a tag
+     * @param {Object} tag
+     * @returns {Decoda}
+     */
     $$.insertTag = function(tag) {
       this.textarea.focus();
-      var defaultValue, contentValue = this.textarea.getSelection().text, field = tag.promptFor || 'default', answer, func;
-      if (tag.prompt) {
+      var defaultValue, contentValue = this.textarea.getSelection().text, field = tag.promptFor || 'default', answer;
+      if (tag.prompt) {//If we have a prompt, ask for the value
         answer = prompt(tag.prompt);
         if (answer === null) {
           return this;
         }
-        if ($.isFunction(tag.onInsert)) {
+        if ($.isFunction(tag.onInsert)) { //Call any custom function defined by the tag
           answer = $.proxy(tag.onInsert, this, answer, field)();
         }
         if (field === 'default') {
@@ -252,26 +423,35 @@
           contentValue = answer;
         }
       }
+      //Generate the markup and insert it
       var markup = this.formatTag(tag, defaultValue, contentValue);
-      if (this.textarea.getSelection().length > 0) {
+      if (this.textarea.getSelection().length > 0) {//We have a selection
         if (tag.selfClose) {
           this.textarea.replaceSelectedText(markup, this.collapse.collapseToEnd);
         } else {
           this.textarea.replaceSelectedText(markup);
         }
-      } else {
+      } else { //We have no selection (selected text is 0 length, selection.start is the cursor pos
         this.textarea.replaceSelectedText(markup, this.collapse.collapseToEnd);
-        if (!tag.selfClose) {
+        if (!tag.selfClose) {//Place the cursor between start and end tags if needed
           var close = this.formatTag(tag, defaultValue, contentValue, 'close');
           this.textarea.setSelection(this.textarea.getSelection().start - close.length);
         }
       }
-      if ($.isFunction(this.options.onInsert)) {
+      if ($.isFunction(this.options.onInsert)) { //Callback on insert
         $.proxy(this.options.onInsert, this, markup)();
       }
 
       return this;
     };
+    /**
+     * Create the actual markup to be inserted
+     * @param {Object} tag
+     * @param {String} defaultValue
+     * @param {String} contentValue
+     * @param {String} type
+     * @returns {String}
+     */
     $$.formatTag = function(tag, defaultValue, contentValue, type) {
       defaultValue = defaultValue || tag.defaultValue || '';
       contentValue = contentValue || tag.placeholder || '';
@@ -300,8 +480,13 @@
       }
       return open + contentValue + close;
     };
+    /**
+     * Renders the help section
+     * @returns {Decoda}
+     */
     $$.renderHelp = function() {
       this.help.data('render', true);
+      this.help.empty();//Clean this in case we are generating again
       var table = this.createElement('table'),
               thead = this.createElement('thead'),
               tbody = this.createElement('tbody'),
@@ -326,38 +511,51 @@
       }, this));
       ;
       this.help.append(table.append(thead, tbody));
-      if ($.isFunction(this.options.onRenderHelp)) {
+      if ($.isFunction(this.options.onRenderHelp)) { //Callback on help render
         $.proxy(this.options.onRenderHelp, this, table)();
       }
+      return this;
     };
+    /**
+     * Renders the preview section
+     * @returns {Decoda}
+     */
     $$.renderPreview = function() {
       this.preview.addClass('loading');
-      var isSubmittedFullyAndWithFileEnctype = !!(this.options.submitFullFormOnPreview && ( typeof this.form.attr('enctype') !== 'undefined' && this.form.attr('enctype') === 'multipart/form-data' ));
+      var isSubmittedFullyAndWithFileEnctype = !!(this.options.submitFullFormOnPreview && (typeof this.form.attr('enctype') !== 'undefined' && this.form.attr('enctype') === 'multipart/form-data'));
       $.ajax({
         url: this.options.previewUrl,
         type: 'post',
-        data: (this.options.submitFullFormOnPreview) ? ( isSubmittedFullyAndWithFileEnctype ? new FormData(this.form[0]) : this.form.serialize() ) : {
+        data: (this.options.submitFullFormOnPreview) ? (isSubmittedFullyAndWithFileEnctype ? new FormData(this.form[0]) : this.form.serialize()) : {
           input: this.textarea.val()
         },
-        processData: !isSubmittedFullyAndWithFileEnctype,
-        contentType: isSubmittedFullyAndWithFileEnctype ? false : 'application/x-www-form-urlencoded; charset=UTF-8',
-        success: $.proxy(function(response){
+        processData: !isSubmittedFullyAndWithFileEnctype, //Needed so that jQuery does not parse FormData and fails
+        contentType: isSubmittedFullyAndWithFileEnctype ? false : 'application/x-www-form-urlencoded; charset=UTF-8', //FormData needs no contentType because of the multipart
+        success: $.proxy(function(response) {
           this.preview.removeClass('loading').html(response);
         }, this),
-        error: $.proxy(function(xhr,status,error){
+        error: $.proxy(function(xhr, status, error) {
           this.container.show();
           this.enableToolbar();
-
+          this.preview.removeClass('visible').hide();
           alert('An error has occured while rendering the preview. Error : ' + error);
         }, this)
       });
 
-      if($.isFunction(this.options.onRenderPreview)){
+      if ($.isFunction(this.options.onRenderPreview)) { //Callback on preview render
         $.proxy(this.options.onRenderPreview, this)();
       }
+      return this;
     };
+    /**
+     * Keydown listener for shortcuts
+     * @param {KeyEvent} e
+     * @param {Object} command
+     * @param {DOMElement} button
+     * @returns {Decoda}
+     */
     $$._listenKeydown = function(e, command, button) {
-      if (e.ctrlKey && ( ( typeof(e.key) !== 'undefined' && e.key === command.key ) || ( e.keyCode === command.keyCode ) ) ) {
+      if (e.ctrlKey && ((typeof (e.key) !== 'undefined' && e.key === command.key) || (e.keyCode === command.keyCode))) {
         e.stopPropagation();
         e.preventDefault();
         if ($.isFunction(command.onClick)) {
@@ -368,9 +566,13 @@
         return false;
       }
     };
-    $.proxy($$.init,this,el,providedOptions)();
-    return $$;
+    $.proxy(this.init, this, el, providedOptions)();
+    return this;
   };
+  /**
+   * Decoda Filters
+   * @type Object
+   */
   $.Decoda.filters = {
     defaults: {
       b: {tag: 'b', title: 'Bold', key: 'b'},
@@ -607,6 +809,10 @@
       }
     }
   };
+  /**
+   * Decoda Controls
+   * @type Object
+   */
   $.Decoda.controls = {
     editor: {
       preview: {
@@ -622,7 +828,7 @@
           this.container.hide();
           this.help.hide();
 
-          if (this.preview.hasClass('visible')) {
+          if (this.preview.hasClass('visible')) { //Trick to know if the div is showing or now
             this.preview.removeClass('visible').hide().empty();
             this.container.show();
             this.enableToolbar();
@@ -641,7 +847,6 @@
         title: 'Clean',
         onClick: function(command, button) {
           this.disableToolbar();
-          console.log(button);
           if (this.clean()) {
             window.setTimeout($.proxy(function() {
               this.enableToolbar();
@@ -655,13 +860,13 @@
         onClick: function(command, button) {
           if (!this.tags.length) {
             alert('No tag filters have been loaded');
-           return;
+            return;
           }
 
           this.container.hide();
           this.preview.hide();
 
-          if (!this.help.data('render')) {
+          if (!this.help.data('render')) { //Trick to know if the help has previously been rendered
             this.renderHelp();
           }
 
@@ -678,6 +883,12 @@
       }
     }
   };
+  /**
+   * jQuery plugin entry point
+   * Called by $(el).Decoda({})
+   * @param {Object} options
+   * @returns {Decoda}
+   */
   $.fn.Decoda = function(options) {
     return new $.Decoda(this, options);
   };
