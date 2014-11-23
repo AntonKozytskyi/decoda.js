@@ -10,7 +10,7 @@
  * @uses Rangy Inputs (https://github.com/timdown/rangyinputs)
  */
 ;
-(function($) {
+(function($, w) {
   /* Tidying function */
   var walk = function(string, replacements) {
     var result = string, key;
@@ -38,7 +38,7 @@
     return this;
   };
   /* End tidying function */
-  $.Decoda = function(el, providedOptions) {
+  w.Decoda = function(el, providedOptions) {
     var $$ = this;
     /**
      * Default options
@@ -172,8 +172,11 @@
       } else {
         this.textarea = el;
       }
-      if (!this.textarea||this.textarea.length!==1) {//Now, we don't want more than 1 element at a time per call, or it becomes impossible to know where to add the toolbar, or the text for that instance
-        throw new Exception('Invalid textarea');
+      if (!this.textarea || this.textarea.length !== 1) {//Now, we don't want more than 1 element at a time per call, or it becomes impossible to know where to add the toolbar, or the text for that instance
+        throw new Decoda.DecodaException('Too many elements');
+      }
+      if (this.textarea.prop('nodeName').toLowerCase() !== 'textarea') {
+        throw new Decoda.DecodaException('Textarea expected to be a textarea, got ' + this.textarea.prop('nodeName'));
       }
 
       this.form = this.textarea.parents('form');
@@ -224,8 +227,8 @@
     };
     /**
      * Creates the default toolbar :
-     * All commands from $.Decoda.controls
-     * All filters from $.Decoda.filters except (email, url, image, video)
+     * All commands from Decoda.controls
+     * All filters from Decoda.filters except (email, url, image, video)
      * @param {Array} blacklist
      * @returns {Decoda}
      */
@@ -244,7 +247,7 @@
      */
     $$.addControls = function(control, commands, blacklist) {
       if (!commands) { //If not provided, add default ones
-        $.each($.Decoda.controls, $.proxy(function(control, commands) {
+        $.each(Decoda.controls, $.proxy(function(control, commands) {
           this.addControls(control, commands, blacklist);
         }, this));
       } else {
@@ -261,7 +264,7 @@
      */
     $$.addFilters = function(filter, tags, blacklist) {
       if (!tags) { //If not provided, add default ones
-        var filters = $.extend({}, $.Decoda.filters);
+        var filters = $.extend({}, Decoda.filters);
         delete filters.email;
         delete filters.url;
         delete filters.image;
@@ -333,7 +336,7 @@
       }, this));
       if (ul[0].hasChildNodes()) { //If the ul is not empty, append it to the toolbar
         this.toolbar.append(ul);
-        if(this.help.data('render')){
+        if (this.help.data('render')) {
           this.help.data('render', false);
         }
         if ($.isFunction(this.options.onRenderToolbar)) { //Callback on render
@@ -573,7 +576,7 @@
    * Decoda Filters
    * @type Object
    */
-  $.Decoda.filters = {
+  w.Decoda.filters = {
     defaults: {
       b: {tag: 'b', title: 'Bold', key: 'b'},
       i: {tag: 'i', title: 'Italics', key: 'i'},
@@ -813,7 +816,7 @@
    * Decoda Controls
    * @type Object
    */
-  $.Decoda.controls = {
+  w.Decoda.controls = {
     editor: {
       preview: {
         tag: 'preview',
@@ -883,13 +886,46 @@
       }
     }
   };
+  w.Decoda.DecodaException = function(message) {
+    this.message = message;
+  }
   /**
    * jQuery plugin entry point
    * Called by $(el).Decoda({})
    * @param {Object} options
    * @returns {Decoda}
    */
-  $.fn.Decoda = function(options) {
-    return new $.Decoda(this, options);
+  $.fn.decoda = function(options) {
+    var $this=this;
+    if (typeof this === 'string' || (!this.jquery && this.nodeType === 1)) {
+      //If we get a string, it must be a jQuery selector.
+      //If we get a DOMElement, it is wrapped in jQuery beforehand
+      $this = $(this);
+    }
+    if ((!!$this.jquery && $this.length > 1) || $.isArray($this)) {
+      var rVal = [];
+      //Multiple elements
+      if (!!$this.jquery) {
+        //jQuery object
+        $this.each(function(index, val) { //Iterate over everything
+          var id = val.id || 'decoda-id-' + (new Date()).getTime() + '-' + Math.floor((1 + 10000 * Math.random()));
+          rVal[id] = new Decoda($(val).attr('id', id), options);
+        });
+      } else {
+        var id;
+        //Array of elements
+        for (el in $this) {
+          e = $this[el];
+          if (e.nodeType === 1) {
+            id = e.id || 'decoda-id-' + (new Date()).getTime() + '-' + Math.floor((1 + 10000 * Math.random()));
+            rVal[id] = new Decoda($(e).attr('id', id), options);
+          }
+        }
+      }
+      return rVal;
+    } else {
+      //Single element
+      return new Decoda($this, options);
+    }
   };
-})(jQuery);
+})(jQuery, window);

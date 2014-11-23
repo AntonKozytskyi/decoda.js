@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Decoda - Option Configuration</title>
+    <title>Decoda - jQuery Option Configuration</title>
     <link type="text/css" rel="stylesheet" href="css/style.css">
     <link type="text/css" rel="stylesheet" href="../src/css/decoda.css">
     <link type="text/css" rel="stylesheet" href="../src/css/decoda-theme.css">
@@ -42,30 +42,30 @@
 
     <script type="text/javascript">
       $(document).ready(function() {
-        $('#textarea-1').Decoda({
+        $('#textarea-1').decoda({
           open: '{',
           close: '}'
-        }).addFilters('default', $.Decoda.filters.defaults);
-        $('#textarea-2').Decoda({
+        }).addFilters('default', Decoda.filters.defaults);
+        $('#textarea-2').decoda({
           onRenderToolbar: function(ul) {
             console.log('onRender', ul);
             ul.find('button').each(function(index, button) {
               $(button).html($(button).attr('title'));
             });
           }
-        }).addFilters('default', $.Decoda.filters.defaults);
-        $('#textarea-3').Decoda({
+        }).addFilters('default', Decoda.filters.defaults);
+        $('#textarea-3').decoda({
           onSubmit: function() {
             console.log('onSubmit', this.textarea);
             return false;
           }
-        }).addFilters('default', $.Decoda.filters.defaults);
-        $('#textarea-4').Decoda({
+        }).addFilters('default', Decoda.filters.defaults);
+        $('#textarea-4').decoda({
           onInsert: function() {
             console.log('onInsert');
             this.textarea.replaceSelectedText('(Inserted via onInsert)', this.collapse.collapseToEnd);
           }
-        }).addFilters('default', $.Decoda.filters.defaults);
+        }).addFilters('default', Decoda.filters.defaults);
       });
     </script>
   </body>

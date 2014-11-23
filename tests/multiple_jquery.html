@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Decoda - Multiple Instances</title>
+    <title>Decoda - jQuery Multiple Instances</title>
     <link type="text/css" rel="stylesheet" href="css/style.css">
     <link type="text/css" rel="stylesheet" href="../src/css/decoda.css">
     <link type="text/css" rel="stylesheet" href="../src/css/decoda-theme.css">
@@ -48,6 +48,15 @@
           <label for="textarea-7">All Controls:</label>
           <textarea id="textarea-7" cols="100" rows="10"></textarea>
         </div>
+        
+        <div class="input">
+          <label for="textarea-8">All Controls:</label>
+          <textarea class="apply-decoda" id="textarea-8" cols="100" rows="10"></textarea>
+        </div>
+        <div class="input">
+          <label>All Controls:</label>
+          <textarea class="apply-decoda" cols="100" rows="10"></textarea>
+        </div>
 
         <div class="input">
           <button type="submit">Submit</button>
@@ -57,33 +66,36 @@
 
     <script type="text/javascript">
       $(document).ready(function() {
-        $('#textarea-1').Decoda()
-                .addFilters('default', $.Decoda.filters.defaults)
-                .addControls('editor', $.Decoda.controls.editor);
+        $('#textarea-1').decoda()
+                .addFilters('default', Decoda.filters.defaults)
+                .addControls('editor', Decoda.controls.editor);
 
-        $('#textarea-2').Decoda()
-                .addFilters('block', $.Decoda.filters.block);
+        $('#textarea-2').decoda()
+                .addFilters('block', Decoda.filters.block);
 
-        $('#textarea-3').Decoda()
-                .addFilters('text', $.Decoda.filters.text);
+        $('#textarea-3').decoda()
+                .addFilters('text', Decoda.filters.text);
 
-        $('#textarea-4').Decoda()
-                .addFilters('email', $.Decoda.filters.email)
-                .addFilters('image', $.Decoda.filters.image)
-                .addFilters('url', $.Decoda.filters.url)
-                .addFilters('video', $.Decoda.filters.video);
+        $('#textarea-4').decoda()
+                .addFilters('email', Decoda.filters.email)
+                .addFilters('image', Decoda.filters.image)
+                .addFilters('url', Decoda.filters.url)
+                .addFilters('video', Decoda.filters.video);
 
-        $('#textarea-5').Decoda()
-                .addFilters('list', $.Decoda.filters.list)
-                .addFilters('quote', $.Decoda.filters.quote)
-                .addFilters('code', $.Decoda.filters.code);
+        $('#textarea-5').decoda()
+                .addFilters('list', Decoda.filters.list)
+                .addFilters('quote', Decoda.filters.quote)
+                .addFilters('code', Decoda.filters.code);
 
-        $('#textarea-6').Decoda()
-                .addFilters('table', $.Decoda.filters.defaults)
-                .addControls('editor', $.Decoda.controls.editor);
+        $('#textarea-6').decoda()
+                .addFilters('table', Decoda.filters.defaults)
+                .addControls('editor', Decoda.controls.editor);
 
-        $('#textarea-7').Decoda()
-                .addControls('editor', $.Decoda.controls.editor);
+        $('#textarea-7').decoda()
+                .addControls('editor', Decoda.controls.editor);
+        
+        decoda_instances = $('.apply-decoda').decoda();
+        decoda_instances['textarea-8'].addFilters('table', Decoda.filters.defaults);
       });
     </script>
   </body>

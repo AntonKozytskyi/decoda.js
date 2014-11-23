@@ -44,7 +44,7 @@ Instantiate the editor on a textarea element. Call `defaults()` to enable all to
 
 ```javascript
 $(document).ready(function(){
-  $('#textarea').Decoda().defaults();
+  $('#textarea').decoda().defaults();
 });
 ```
 
@@ -52,11 +52,11 @@ Or apply individual toolbars.
 
 ```javascript
 $(document).ready(function(){
-  $('#textarea').Decoda()
-    .addFilters('default', $.Decoda.filters.defaults)
-    .addFilters('block', $.Decoda.filters.block)
-    .addFilters('text', $.Decoda.filters.text)
-    .addControls('editor', $.Decoda.controls.editor);
+  $('#textarea').decoda()
+    .addFilters('default', Decoda.filters.defaults)
+    .addFilters('block', Decoda.filters.block)
+    .addFilters('text', Decoda.filters.text)
+    .addControls('editor', Decoda.controls.editor);
 });
 ```
 
@@ -64,20 +64,20 @@ Or define custom toolbars, or modify existing ones.
 
 ```javascript
 $(document).ready(function(){
-  $.Decoda.filters.custom = {
+  Decoda.filters.custom = {
     audio: {
       tag: 'audio',
       title: 'Audio'
     }
   };
 
-  $.Decoda.controls.editor.preview.onClick = function(command, button) {
+  Decoda.controls.editor.preview.onClick = function(command, button) {
     // Custom logic
   };
 
-  $('#textarea').Decoda()
-    .addFilters('custom', $.Decoda.filters.custom)
-    .addControls('editor', $.Decoda.controls.editor);
+  $('#textarea').decoda()
+    .addFilters('custom', Decoda.filters.custom)
+    .addControls('editor', Decoda.controls.editor);
 });
 ```
 
@@ -86,7 +86,7 @@ As well as these options: `open`, `close`, `namespace`, `previewUrl`, `maxNewLin
 
 ```javascript
 $(document).ready(function(){
-    $('#textarea').Decoda({
+    $('#textarea').decoda({
         previewUrl: '/ajax/preview',
         onInitialize: function() {
             // Do nothing
@@ -100,14 +100,31 @@ You can delay the toolbar adding, as long as you keep the object we provide you 
 ```javascript
 $(document).ready(function(){
     //Just make sure not to use var here, or you lose the variable due to the function scope
-    myDecodaTextareaObject = $('#textarea').Decoda({
+    myDecodaTextareaObject = $('#textarea').decoda({
         previewUrl: '/ajax/preview',
         onInitialize: function() {
             alert('I am a perfectly serious individual.');
         }
-    }).addFilters('block', $.Decoda.filters.block);
+    }).addFilters('block', Decoda.filters.block);
 });
 
-//Half a century later, in a galaxy far far away
-myDecodaTextareaObject.addFilters('text', $.Decoda.filters.text);
+$(document).ready(function(){
+  //Half a century later, in a galaxy far far away
+  myDecodaTextareaObject.addFilters('text', Decoda.filters.text);
+}
 ```
+
+**Those methods are not recommended, and may provide unexpected results :**
+
+In case you want to add Decoda on multiple elements via a jQuery selector, you will be provided with an indexed array of elements :
+The key is the element id, if not found, one will be provided,
+The value is the decoda object on which you can then call your methods as previously.
+
+```javascript
+$(document).ready(function(){
+  var instances = $('.apply-decoda').decoda();
+  instances['textarea-id-1'].addFilters('block', Decoda.filters.block);
+});
+```
+
+It also accepts native arrays of elements if you add the $.fn.decoda function to Array.prototype. NodeList is not supported.
