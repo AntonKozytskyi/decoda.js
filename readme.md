@@ -22,7 +22,9 @@ Browsers
 
 ## Features ##
 
-A full list of Decoda tags, features and functionality can be found here: https://github.com/milesj/php-decoda
+A full list of Decoda tags, features and functionality can be found here: https://github.com/milesj/decoda
+
+An online demo is available at http://decoda-demo.hegesippe.ovh/
 
 ## Documentation ##
 
