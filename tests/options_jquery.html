@@ -41,32 +41,32 @@
     </div>
 
     <script type="text/javascript">
-      $(document).ready(function() {
-        $('#textarea-1').decoda({
-          open: '{',
-          close: '}'
-        }).addFilters('default', Decoda.filters.defaults);
-        $('#textarea-2').decoda({
-          onRenderToolbar: function(ul) {
-            console.log('onRender', ul);
-            ul.find('button').each(function(index, button) {
-              $(button).html($(button).attr('title'));
-            });
+      $( document ).ready( function() {
+        $( '#textarea-1' ).decoda( {
+          open : '{',
+          close : '}'
+        } ).defaults();
+        $( '#textarea-2' ).decoda( {
+          onRenderToolbar : function( ul ) {
+            console.log( 'onRender', ul );
+            ul.find( 'button' ).each( function( index, button ) {
+              $( button ).html( $( button ).attr( 'title' ) );
+            } );
           }
-        }).addFilters('default', Decoda.filters.defaults);
-        $('#textarea-3').decoda({
-          onSubmit: function() {
-            console.log('onSubmit', this.textarea);
+        } ).defaults();
+        $( '#textarea-3' ).decoda( {
+          onSubmit : function() {
+            console.log( 'onSubmit', this.textarea );
             return false;
           }
-        }).addFilters('default', Decoda.filters.defaults);
-        $('#textarea-4').decoda({
-          onInsert: function() {
-            console.log('onInsert');
-            this.textarea.replaceSelectedText('(Inserted via onInsert)', this.collapse.collapseToEnd);
+        } ).defaults();
+        $( '#textarea-4' ).decoda( {
+          onInsert : function() {
+            console.log( 'onInsert' );
+            this.textarea.replaceSelectedText( '(Inserted via onInsert)', this.collapse.collapseToEnd );
           }
-        }).addFilters('default', Decoda.filters.defaults);
-      });
+        } ).defaults();
+      } );
     </script>
   </body>
 </html>

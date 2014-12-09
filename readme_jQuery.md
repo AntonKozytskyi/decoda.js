@@ -8,7 +8,7 @@ A lightweight textarea editor with toolbar functionality for the Decoda markup l
 * jQuery Rangy Inputs by Tim Down (https://github.com/timdown/rangyinputs)
 
 Browsers compatibility test
-* Chrome 38 Linux et Chrome 40-dev Windows
+* Chrome 38 Linux and Chrome 40-dev Windows
 * Aurora 35 Windows (Firefox alpha channel)
 * Opera 26-beta
 * Internet Explorer 10 (IE 8/9 should be OK provided you use jQuery v1. major (support dropped in 2. branch) and don't rely on an enctype of multipart/form-data and FormData)
@@ -24,6 +24,9 @@ Browsers compatibility test
 ## Features ##
 
 A full list of Decoda tags, features and functionality can be found here: https://github.com/milesj/decoda
+
+An online demo is available at http://decoda-demo.hegesippe.ovh/
+
 
 ## Options list ##
 * **open** : start of a tag, defaults to *[*
